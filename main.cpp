@@ -11,7 +11,7 @@ void loginMenu();
 void signInMenu();
 void staffMenu();
 void loginError();
-void loginSuccess();
+void signInSuccess();
 
 
 int main() {
@@ -68,20 +68,30 @@ void staffSignIn(){
             cout << "<====================================>\n";
             cout << "Input: ";
             cin >> staffAcc;
-            if (cin.fail() || staffAcc >= 4 || staffAcc == '\0') {
+
+            //error handling if input is not what is expected
+
+            if (cin.fail() || staffAcc >= 4 || staffAcc <= 0) {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 system("CLS");
-            } else if (staffAcc ==1) {
+
+              
+                cout << "Invalid input. Please enter a number between 1 and 3.\n";
+                cout << "<===========================================>\n";
+                continue; // Retry input without processing further
+
+            } 
+            
+            if (staffAcc ==1) {
                 loginMenu();
+                break;
             } else if (staffAcc == 2){
                 signInMenu();
+                break;
             } else if (staffAcc == 3){
                 main();
-            } else {
-                system("CLS");
                 break;
-                
             }
         }
 
@@ -96,14 +106,14 @@ void loginMenu(){
     bool userAuthenticated = false;
 
     system("CLS");
-    cout << "           Login [Type 'Back' to return\n";
+    cout << "           Login [Type 'Back' to return]\n";
     cout << "<====================================>\n";
     cout << "Username: ";
     cin >> staffUserName;
     
 
 
-    if (staffUserName == "Back" || staffUserName == "back") {
+    if (staffUserName == "Back" || staffUserName == "back") { // added back option in case of user mis clicked an option
         
         staffSignIn();
     }
@@ -137,10 +147,10 @@ void loginMenu(){
 
     authenticator.close();
 
-    if (userAuthenticated == true){
+    if (userAuthenticated == true){ // if login successful, goes to the option for STAFF
         staffMenu();
 
-    } else if (userAuthenticated == false){
+    } else if (userAuthenticated == false){ // if login is unsuccessful, shows login error
         loginError();
     }
 
@@ -148,14 +158,54 @@ void loginMenu(){
 }
 
 void signInMenu(){
-    system("CLS");
+    system("CLS"); // clears the console screen
+
     string signInUsername;
     string signInPasswd;
-    cout << "           Sign In\n";
+
+    cout << "           Sign In [Type 'Back' to return]\n";
     cout << "Create Username: ";
     cin >> signInUsername;
+
+    if (signInUsername == "Back" || signInUsername == "back") {
+        staffSignIn();
+    }
+
     cout << "Create Password: ";
     cin >> signInPasswd;
+
+    if (signInPasswd == "Back" || signInPasswd == "back") {
+        staffSignIn();
+    }
+
+// checks if the txt file is present
+
+    authenticator.open("authenticator.txt", ios::in);
+    if (!authenticator.is_open()){
+        cerr << "Error: Authenticator File is Missing!";
+        return;
+    }
+
+    string accExisted;
+    bool usernameExists = false;
+
+    while (authenticator >> accExisted) { //gets the username and password from the text file and assign in to the variable accExisted
+        if (accExisted == signInUsername) { //if the user input matches one of the username 
+            usernameExists = true;
+            break;
+        }
+    }
+
+    authenticator.close();
+
+    if (usernameExists == true) {
+        cout << "Username already exists!\n";
+        cout << "<===========================================>\n";
+        system("pause");
+        signInMenu();
+        system("CLS");
+        return;
+    }
 
     authenticator.open("authenticator.txt", ios::app);
     if (!authenticator.is_open()){
@@ -163,57 +213,77 @@ void signInMenu(){
         return;
     }
 
-    authenticator << signInUsername<< endl << signInPasswd << endl;
-    authenticator.close();
+    // if the creation of the username and password is successfull then the code below wil insert
+    // the username and password to the file
 
-    loginSuccess();
+    authenticator << signInUsername<< endl << signInPasswd << endl;
+    authenticator.close(); // will close the file
+
+    signInSuccess(); // display sign in was successful
 
 }
+
+// the things staff can do 
 
 void staffMenu(){
 
     system("CLS");
-    cout << "|| STAFF MENU ||\n";
-    cout << "<===========================================>\n";
-    cout << "   Available Rooms\n";
-    cout << "   Bookings\n";
-    cout << "   Reservations\n";
 
-    system("pause");
+    int userInput;
+    cout << "               || STAFF MENU ||\n";
+    cout << "<===========================================>\n";
+    cout << " [1]  Available Rooms\n";
+    cout << " [2]  Bookings\n";
+    cout << " [3]  Reservations\n";
+    
+    while (true) {
+        cout << "Input: ";
+        cin >> userInput;
+
+        if (cin.fail()){
+
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            system("CLS");
+            cout << "Input Error\n";
+            cout << "<===========================================>\n";
+            system("pause");
+
+            staffMenu();
+            system("CLS");
+        }
+    }
+    
+
     system("CLS");
 }
 
+// login error
+
 void loginError(){
 
-    int loginBack;
     cout << "<===========================================>\n";
     cout << "Wrong Credentials\n";
-    cout << "Press [1] to return to Login page\n";
     cout << "<===========================================>\n";
-    cout << "Input: ";
-
-    cin >> loginBack;
-
-    if (loginBack == 1) {
-        staffSignIn();
-    }
+    system("pause");
+    loginMenu();
+    system("CLS");
 
 }
 
-void loginSuccess(){
+// successful login message
 
-    int signInBack;
+void signInSuccess(){
+
     cout << "<===========================================>\n";
     cout << "Sign in Success!\n";
-    cout << "Press [1] to return to Login page\n";
     cout << "<===========================================>\n";
-    cout << "Input: ";
+    system("pause");
 
-    cin >> signInBack;
+    staffSignIn();
+    system("CLS");
 
-    if (signInBack == 1) {
-        staffSignIn();
-    }
+    
 
 }
 
