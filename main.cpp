@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <limits>
+#include <vector>
 using namespace std;
 
 fstream authenticator;
@@ -12,16 +13,14 @@ void signInMenu();
 void staffMenu();
 void loginError();
 void signInSuccess();
+void forgotPass();
 
 
 int main() {
 
     int userInput;
-    
 
     system("CLS");
-
-
 
     do
     {
@@ -33,7 +32,17 @@ int main() {
         cout << "<====================================>\n\n";
         cout << "Input: ";
         cin >> userInput;
-        system("CLS");
+
+        if (cin.fail() || userInput >=4 || userInput <=0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter a number between 1 to 3.\n";
+            cout << "<====================================>\n";
+            system("pause");
+            main();
+            system("CLS");
+
+        }
 
 
         switch (userInput)
@@ -74,12 +83,12 @@ void staffSignIn(){
             if (cin.fail() || staffAcc >= 4 || staffAcc <= 0) {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                system("CLS");
-
               
-                cout << "Invalid input. Please enter a number between 1 and 3.\n";
+                cout << "Invalid input. Please enter a number between 1 to 3.\n";
                 cout << "<===========================================>\n";
-                continue; // Retry input without processing further
+                system("pause");
+                staffSignIn();
+                system("CLS");
 
             } 
             
@@ -103,6 +112,7 @@ void loginMenu(){
 
     string staffUserName;
     string staffPasswd;
+    string forgotten;
     bool userAuthenticated = false;
 
     system("CLS");
@@ -118,12 +128,17 @@ void loginMenu(){
         staffSignIn();
     }
 
+    cout << "type [forgot] if you forgot your password\n";
+
     cout << "Password: ";
     cin >> staffPasswd;
 
     if (staffPasswd == "Back" || staffPasswd == "back") {
         
         staffSignIn();
+    } else if (staffPasswd == "forgot" || staffPasswd == "Forgot") {
+        forgotPass();
+        system("CLS");
     }
 
     string fileUserName;
@@ -167,6 +182,8 @@ void signInMenu(){
     cout << "Create Username: ";
     cin >> signInUsername;
 
+    // back option if user want to go back
+
     if (signInUsername == "Back" || signInUsername == "back") {
         staffSignIn();
     }
@@ -180,7 +197,7 @@ void signInMenu(){
 
 // checks if the txt file is present
 
-    authenticator.open("authenticator.txt", ios::in);
+    authenticator.open("authenticator.txt", ios::in); // opens the authenticator txt file
     if (!authenticator.is_open()){
         cerr << "Error: Authenticator File is Missing!";
         return;
@@ -251,7 +268,11 @@ void staffMenu(){
 
             staffMenu();
             system("CLS");
+        } else {
+            
         }
+
+        
     }
     
 
@@ -287,6 +308,49 @@ void signInSuccess(){
 
 }
 
+void forgotPass(){
+    system("CLS");
+    string entrUser;
+    string newPasswd;
+    cout << "Enter Username: ";
+    cin >> entrUser;
+    cout << "Enter New Password: ";
+    cin >> newPasswd;
+
+    authenticator.open("authenticator.txt", ios::in);
+    if (!authenticator.is_open()) {
+        cerr << "Authenticator file is missing!";
+        return;
+    }
+
+    
+
+    vector <pair<string, string>> userRecords;
+    bool userVerify = false;
+
+    string forgotUser;
+    string oldPass;
+
+    while (getline(authenticator, forgotUser) && getline(authenticator, oldPass)) {
+        if(entrUser == forgotUser) {
+            userRecords.push_back(make_pair(forgotUser, newPasswd));
+            userVerify = true;
+        } else {
+            userRecords.push_back(make_pair(forgotUser, oldPass));
+        }
+        
+    }
+
+    authenticator.close();
+
+    if (!userVerify) {
+        cout << "User not found!\n";
+        return;
+    }
+    
+    cout << "Password successfully updated!\n";
+
+}
 
 
 
@@ -307,5 +371,6 @@ void signInSuccess(){
 
 
 
-
+// https://www.youtube.com/watch?v=TUBVZvzEQAs
+// https://cplusplus.com/reference/utility/make_pair/
 // https://stackoverflow.com/questions/50325078/how-to-send-an-error-message-when-c-string-user-input-empty
