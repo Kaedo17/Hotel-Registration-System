@@ -14,6 +14,9 @@ void staffMenu();
 void loginError();
 void signInSuccess();
 void forgotPass();
+void availRooms();
+void myBookings();
+void myReservations();
 
 
 int main() {
@@ -44,21 +47,16 @@ int main() {
 
         }
 
-
-        switch (userInput)
-        {
-        case 1: staffSignIn();
+        if (userInput == 1){
+            staffSignIn();
             system("CLS");
-            
-            break;
+        }
 
-        case 2:
 
         
-        default:
-            break;
-        }
         } while (userInput !=3);
+
+        return 0;
     
 }
 
@@ -87,8 +85,9 @@ void staffSignIn(){
                 cout << "Invalid input. Please enter a number between 1 to 3.\n";
                 cout << "<===========================================>\n";
                 system("pause");
-                staffSignIn();
                 system("CLS");
+                continue;
+                
 
             } 
             
@@ -99,7 +98,7 @@ void staffSignIn(){
                 signInMenu();
                 break;
             } else if (staffAcc == 3){
-                main();
+                return;
                 break;
             }
         }
@@ -115,30 +114,41 @@ void loginMenu(){
     string forgotten;
     bool userAuthenticated = false;
 
-    system("CLS");
+    while (true)
+    {
+        system("CLS");
     cout << "           Login [Type 'Back' to return]\n";
     cout << "<====================================>\n";
+    cout << "[1] Back\n";
+    cout << "[2] Forgot Password\n";
     cout << "Username: ";
     cin >> staffUserName;
-    
 
-
-    if (staffUserName == "Back" || staffUserName == "back") { // added back option in case of user mis clicked an option
-        
+    if (staffUserName == "1") { // added back option in case of user mis clicked an option
         staffSignIn();
+        system("CLS");
+        return;
+
+    } else if (staffUserName == "2") {
+        forgotPass();
+        system("CLS");
+        return;
+        
     }
 
-    cout << "type [forgot] if you forgot your password\n";
+    
 
     cout << "Password: ";
     cin >> staffPasswd;
 
-    if (staffPasswd == "Back" || staffPasswd == "back") {
-        
-        staffSignIn();
-    } else if (staffPasswd == "forgot" || staffPasswd == "Forgot") {
+    if (staffPasswd == "1") {
+        system("CLS");
+        continue;
+    } else if (staffPasswd == "2") {
         forgotPass();
         system("CLS");
+        return;
+        
     }
 
     string fileUserName;
@@ -152,7 +162,7 @@ void loginMenu(){
 
     // loop that reads data from the txt
 // transfers data from the text to a variable "fileUserName and filePasswd"
-    while (getline(authenticator, fileUserName) && getline(authenticator, filePasswd)) {
+    while (authenticator >> fileUserName >> filePasswd) {
         //cout << fileUserName << " " << filePasswd;
         if (fileUserName == staffUserName && filePasswd == staffPasswd) {
             userAuthenticated = true;
@@ -164,10 +174,17 @@ void loginMenu(){
 
     if (userAuthenticated == true){ // if login successful, goes to the option for STAFF
         staffMenu();
+        system("CLS");
+        return;
 
     } else if (userAuthenticated == false){ // if login is unsuccessful, shows login error
         loginError();
+        system("CLS");
+        return;
     }
+    }
+    
+
 
 
 }
@@ -178,21 +195,26 @@ void signInMenu(){
     string signInUsername;
     string signInPasswd;
 
-    cout << "           Sign In [Type 'Back' to return]\n";
+    while (true) {
+        cout << "           Sign In\n";
+    cout << "[1] Back\n";
     cout << "Create Username: ";
     cin >> signInUsername;
 
     // back option if user want to go back
 
-    if (signInUsername == "Back" || signInUsername == "back") {
+    if (signInUsername == "1") {
         staffSignIn();
+        system("CLS");
+        return;
     }
 
     cout << "Create Password: ";
     cin >> signInPasswd;
 
-    if (signInPasswd == "Back" || signInPasswd == "back") {
-        staffSignIn();
+    if (signInPasswd == "1") {
+        system("CLS");
+        continue;
     }
 
 // checks if the txt file is present
@@ -233,10 +255,14 @@ void signInMenu(){
     // if the creation of the username and password is successfull then the code below wil insert
     // the username and password to the file
 
-    authenticator << signInUsername<< endl << signInPasswd << endl;
+    authenticator << signInUsername<< " " << signInPasswd << endl;
     authenticator.close(); // will close the file
 
     signInSuccess(); // display sign in was successful
+
+    return;
+    }
+    
 
 }
 
@@ -246,18 +272,21 @@ void staffMenu(){
 
     system("CLS");
 
-    int userInput;
-    cout << "               || STAFF MENU ||\n";
-    cout << "<===========================================>\n";
-    cout << " [1]  Available Rooms\n";
-    cout << " [2]  Bookings\n";
-    cout << " [3]  Reservations\n";
+    int userInputStaff;
+    
     
     while (true) {
-        cout << "Input: ";
-        cin >> userInput;
 
-        if (cin.fail()){
+        cout << "               || STAFF MENU ||\n";
+        cout << "<===========================================>\n";
+        cout << " [1]  Available Rooms\n";
+        cout << " [2]  Bookings\n";
+        cout << " [3]  Reservations\n";
+        cout << " [4]  Save and Exit\n";
+        cout << "Input: ";
+        cin >> userInputStaff;
+
+        if (cin.fail() || userInputStaff >=5 || userInputStaff <=0){
 
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -265,12 +294,30 @@ void staffMenu(){
             cout << "Input Error\n";
             cout << "<===========================================>\n";
             system("pause");
-
-            staffMenu();
             system("CLS");
-        } else {
+            continue;
             
         }
+
+        if (userInputStaff == 1) {
+            availRooms();
+            system("CLS");
+            return;
+            
+        } else if (userInputStaff == 2){
+            myBookings();
+            system("CLS");
+            return;
+        } else if (userInputStaff == 3){
+            myReservations();
+            system("CLS");
+            return;
+        } else if (userInputStaff == 4){
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            system("CLS");
+            return;
+            }
 
         
     }
@@ -287,8 +334,9 @@ void loginError(){
     cout << "Wrong Credentials\n";
     cout << "<===========================================>\n";
     system("pause");
-    loginMenu();
     system("CLS");
+    loginMenu();
+    
 
 }
 
@@ -300,9 +348,9 @@ void signInSuccess(){
     cout << "Sign in Success!\n";
     cout << "<===========================================>\n";
     system("pause");
-
-    staffSignIn();
     system("CLS");
+    staffSignIn();
+    
 
     
 
@@ -312,44 +360,97 @@ void forgotPass(){
     system("CLS");
     string entrUser;
     string newPasswd;
-    cout << "Enter Username: ";
-    cin >> entrUser;
-    cout << "Enter New Password: ";
-    cin >> newPasswd;
-
-    authenticator.open("authenticator.txt", ios::in);
-    if (!authenticator.is_open()) {
-        cerr << "Authenticator file is missing!";
-        return;
-    }
-
     
+    while (true)
+    {
+        cout << "       F O R G O T    P A S S W O R D\n";
+        cout << "<===========================================>\n";
 
-    vector <pair<string, string>> userRecords;
-    bool userVerify = false;
+        cout << "[1] Back\n";
 
-    string forgotUser;
-    string oldPass;
+        cout << "Enter Username: ";
+        cin >> entrUser;
 
-    while (getline(authenticator, forgotUser) && getline(authenticator, oldPass)) {
-        if(entrUser == forgotUser) {
-            userRecords.push_back(make_pair(forgotUser, newPasswd));
-            userVerify = true;
-        } else {
-            userRecords.push_back(make_pair(forgotUser, oldPass));
+        if (entrUser == "1") {
+            staffSignIn();
+            return;
         }
+
+        cout << "Enter New Password: ";
+        cin >> newPasswd;
+
+        if (newPasswd == "1") {
+            forgotPass();
+            return;
+        }
+
+        authenticator.open("authenticator.txt", ios::in);
+        if (!authenticator.is_open()) {
+            cerr << "Authenticator file is missing!";
+            return;
+        }
+
         
-    }
 
-    authenticator.close();
+        vector <pair<string, string>> userRecords;
+        bool userFound = false;
 
-    if (!userVerify) {
-        cout << "User not found!\n";
+        string forgotUser;
+        string oldPass;
+
+        while (authenticator >> forgotUser >> oldPass) {
+            if(entrUser == forgotUser) {
+                userRecords.push_back(make_pair(forgotUser, newPasswd));
+                userFound = true;
+            } else {
+                userRecords.push_back(make_pair(forgotUser, oldPass));
+            }
+            
+        }
+
+        authenticator.close();
+
+        if (!userFound) {
+            cout << "User not found!\n";
+            return;
+        }
+
+        fstream updatedAuth("authenticator.txt", ios::out | ios::trunc);
+
+        if (!updatedAuth.is_open()){
+            cerr << "Authenticator file not found!\n";
+            return;
+        }
+
+        for (const auto& record : userRecords) {
+            updatedAuth << record.first << " " << record.second << endl;
+        }
+
+        updatedAuth.close();
+
+        cout << "<===========================================>\n";
+        
+        cout << "Password successfully updated!\n";
+        system("pause");
+        system("CLS");
+        staffSignIn();
         return;
-    }
+        }
     
-    cout << "Password successfully updated!\n";
 
+}
+
+
+void availRooms(){
+    cout << "me\n";
+}
+
+void myBookings(){
+    cout << "me\n";
+}
+
+void myReservations(){
+    cout << "me\n";
 }
 
 
@@ -369,8 +470,8 @@ void forgotPass(){
 
 
 
-
-
+// https://stackoverflow.com/questions/29859796/c-auto-vs-auto#:~:text=So%2C%20in%20a%20nutshell%2C%20if,you%20want%20references%2C%20use%20auto%26%20.
+// https://www.youtube.com/watch?v=2vOPEuiGXVo
 // https://www.youtube.com/watch?v=TUBVZvzEQAs
 // https://cplusplus.com/reference/utility/make_pair/
 // https://stackoverflow.com/questions/50325078/how-to-send-an-error-message-when-c-string-user-input-empty
