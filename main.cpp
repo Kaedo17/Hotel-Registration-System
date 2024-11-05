@@ -42,8 +42,9 @@ int main() {
             cout << "Invalid input. Please enter a number between 1 to 3.\n";
             cout << "<====================================>\n";
             system("pause");
-            main();
             system("CLS");
+            main();
+            
 
         }
 
@@ -440,13 +441,145 @@ void forgotPass(){
 
 }
 
+fstream roomOne;
 
 void availRooms(){
-    cout << "me\n";
+    
+    system("CLS");
+    string roomsOne;
+    string roomsTwo;
+    string roomInput;
+    string roomsThree;
+    while (true)
+    {
+        /* code */
+    
+    
+        cout << "       A V A I L A B L E   R O O M S\n";
+        cout << "<===========================================>\n";
+        roomOne.open("firstFloorRooms.txt", ios::in);
+
+        if (!roomOne.is_open()) {
+            cout << "Available room file is missing\n";
+            return;
+        }
+        if (roomOne.is_open())
+        {
+            while (getline(roomOne, roomsOne)) {
+            cout << roomsOne << endl;
+            }
+        }
+
+        roomOne.close();
+
+        cout << "Input: ";
+
+        cin >> roomInput;
+
+        if (cin.fail() || roomInput >= "4" || roomInput <="0") {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input\n";
+            system("pause");
+            system("CLS");
+            continue;
+
+
+        }
+
+        if (roomInput == "1") {
+            system ("CLS");
+            staffMenu();
+            
+            return;
+        } else if (roomInput == "2")
+        {
+            myBookings();
+        }
+    
+    
+    
+    }   
+
+    
+    
 }
 
+fstream booKings;
+
 void myBookings(){
-    cout << "me\n";
+    string bookingText;
+    int bookingInput;
+    system("CLS");
+    cout << "B O O K I N G S\n";
+
+    booKings.open("bookings.txt", ios::in);
+
+    if (!booKings.is_open()) {
+        cout << "Available file is missing\n";
+        return;
+    }
+
+    if (booKings.is_open()) {
+        while (getline(booKings, bookingText))
+        {
+            cout << bookingText;
+            
+        }
+        
+    }
+
+    booKings.close();
+
+    cout << "       [1] Back  [2] Confirm a booking\n";
+    cout << "<===========================================>\n";
+
+    cin >> bookingInput;
+
+        if (bookingInput == 2) {
+            string bookingNumber;
+            system("CLS");
+
+            booKings.open("bookings.txt", ios::in);
+
+            if (!booKings.is_open()) {
+                cout << "Available file is missing\n";
+                return;
+            }
+
+            if (booKings.is_open()) {
+                while (getline(booKings, bookingText))
+                {
+                    cout << bookingText;
+                    
+                }
+                
+            }
+
+            string bookingConfirmed;
+
+            cout << "Confirm number: ";
+            cin >> bookingNumber;
+
+            roomOne.open("fistFloorRooms.txt", ios::in);
+            if (!roomOne.is_open()) {
+                cout << "Available room file is missing\n";
+                return;
+            }
+
+            if (roomOne.is_open()){
+                while (getline(roomOne, bookingConfirmed))
+                {
+                    if (bookingConfirmed == bookingNumber){
+
+                    }
+                }
+                
+            }
+
+            
+    }
+
 }
 
 void myReservations(){
