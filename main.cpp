@@ -17,6 +17,9 @@ void forgotPass();
 void availRooms();
 void myBookings();
 void myReservations();
+void customerMenu();
+void reserveRooms();
+
 
 
 int main() {
@@ -50,6 +53,9 @@ int main() {
 
         if (userInput == 1){
             staffSignIn();
+            system("CLS");
+        } else if (userInput ==2) {
+            customerMenu();
             system("CLS");
         }
 
@@ -447,15 +453,9 @@ void availRooms(){
     
     system("CLS");
     string roomsOne;
-    string roomsTwo;
     string roomInput;
-    string roomsThree;
-    while (true)
-    {
-        /* code */
-    
-    
-        cout << "       A V A I L A B L E   R O O M S\n";
+
+    cout << "       A V A I L A B L E   R O O M S\n";
         cout << "<===========================================>\n";
         roomOne.open("firstFloorRooms.txt", ios::in);
 
@@ -471,6 +471,12 @@ void availRooms(){
         }
 
         roomOne.close();
+    while (true)
+    {
+        /* code */
+    
+    
+        
 
         cout << "Input: ";
 
@@ -577,6 +583,8 @@ void myBookings(){
                 
             }
 
+            roomOne.close();
+
             
     }
 
@@ -584,6 +592,90 @@ void myBookings(){
 
 void myReservations(){
     cout << "me\n";
+}
+
+void customerMenu() {
+    system("CLS");
+    int customerInput;
+    while (true)
+    {
+        cout << "               Customer Menu\n";
+        cout << "<===========================================>\n";
+        cout << "  [1] Back\n";
+        cout << "  [2] Book a room\n";
+        cout << "  [3] Reserve Rooms\n";
+
+        cout << "<===========================================>\n";
+
+        cout << "Input: ";
+
+        cin >> customerInput;
+
+        if(cin.fail() || customerInput >=4 || customerInput <=0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid Input\n";
+            system("pause");
+            system("CLS");
+            continue;
+        } else if(customerInput == 1) {
+            system("CLS");
+            main();
+            return;
+
+        } else if(customerInput ==2) {
+            system("CLS");
+            reserveRooms();
+            return;
+        }
+
+    }
+     
+}
+
+void reserveRooms() {
+
+    fstream theReservedList;
+    system("CLS");
+    int reserveInput;
+    string theRooms;
+    while (true) {
+
+        
+
+        cout << "               Room Reservation\n";
+        cout << "<===========================================>\n";
+        cout << "  [1] Back\n";
+
+        theReservedList.open("availRooms.txt", ios::in);
+
+        if (!theReservedList.is_open()) {
+            cout << "Available room file is missing\n";
+            return;
+        }
+        if (theReservedList.is_open())
+        {
+            while (getline(theReservedList, theRooms)) {
+            cout << theRooms << endl;
+            }
+        }
+
+        theReservedList.close();
+
+        cout << "Input: ";
+        cin >> reserveInput;
+
+        if(cin.fail() || reserveInput >=4 || reserveInput <=0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid Input\n";
+            system("pause");
+            system("CLS");
+            continue;
+
+    }
+}
+    
 }
 
 
