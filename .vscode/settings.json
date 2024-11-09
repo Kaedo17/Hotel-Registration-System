@@ -59,6 +59,10 @@
   "files.associations": {
     ".fantomasignore": "ignore",
     "ostream": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "limits": "cpp",
+    "fstream": "cpp",
+    "*.tcc": "cpp",
+    "iosfwd": "cpp"
   }
 }
