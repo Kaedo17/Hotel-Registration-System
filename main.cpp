@@ -23,6 +23,8 @@ void reserveFileFunc();
 void bookARoom();
 void safetyInput();
 void reserveRoomsDisplayFunc();
+void userConfirmation();
+void reservationListConfirmDelDisplay();
 
 
 
@@ -600,9 +602,11 @@ void myBookings(){
 }
 
 void myReservations(){
+    
+    system("CLS");
     while (true) {
         fstream myReservations;
-        string displayReservation;
+        
         string transferReservation;
         string confirmReservationUser;
         string confirmReservationRoomNumber;
@@ -610,18 +614,7 @@ void myReservations(){
         cout << "R E S E R V A T I O N  L I S T\n";
         cout << "[1] Back\n";
 
-        myReservations.open("reservedRoomsLists.txt", ios::in);
-
-        if (!myReservations.is_open()) {
-            cerr << "File not found!";
-            return;
-        } else if (myReservations.is_open()) {
-            while (getline(myReservations, displayReservation)) {
-                cout << "[*] " << displayReservation;
-            }
-        }
-
-        myReservations.close();
+        reservationListConfirmDelDisplay();
 
         cout << "Enter User; [1] to go back: ";
         cin >> confirmReservationUser;
@@ -646,19 +639,17 @@ void myReservations(){
 
         myReservations.close();
 
-        int reservationOptions;
+        
 
         if (!userMatch) {
             cout << "No user matching...";
             continue;
         } else if (userMatch == true) {
-            cout << "[1] Confirm    [2] Delete  [3] Cancel\n";
-            cout << "Options: ";
-            cin >> reservationOptions;
+            userConfirmation();
 
         }
 
-        if (reservationOptions == 1)
+        
 
         
 
@@ -835,6 +826,33 @@ void safetyInput() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
+void userConfirmation() {
+
+    int reservationOptions;
+
+    cout << "[1] Confirm    [2] Delete  [3] Cancel\n";
+    cout << "Options: ";
+    cin >> reservationOptions;
+    if (reservationOptions == 1);
+}
+
+void reservationListConfirmDelDisplay() {
+    fstream myReservations;
+    string displayReservation;
+
+    myReservations.open("reservedRoomsLists.txt", ios::in);
+
+        if (!myReservations.is_open()) {
+            cerr << "File not found!";
+            return;
+        } else if (myReservations.is_open()) {
+            while (getline(myReservations, displayReservation)) {
+                cout << "[*] " << displayReservation << endl;
+            }
+        }
+
+        myReservations.close();
+}
 
 void bookARoom(){
 
