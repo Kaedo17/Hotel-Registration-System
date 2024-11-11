@@ -1,7 +1,4 @@
-305
-305
-1
-1
+
 Karpo 303
 Karpo 101
 Kurtie 101
@@ -16,3 +13,4 @@ Kurite 999
 Kurtiedfs lol
 Kurtiefdsfs 101
 Nathan 302
+Nathan 301
