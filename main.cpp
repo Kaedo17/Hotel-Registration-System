@@ -16,7 +16,7 @@ void signInSuccess();
 void forgotPass();
 void availRooms();
 void myBookings();
-void myReservations();
+void myReservationsFunc();
 void customerMenu();
 void reserveRooms();
 void reserveFileFunc();
@@ -324,7 +324,7 @@ void staffMenu(){
             system("CLS");
             return;
         } else if (userInputStaff == 3){
-            myReservations();
+            myReservationsFunc();
             system("CLS");
             return;
         } else if (userInputStaff == 4){
@@ -512,6 +512,10 @@ void availRooms(){
         } else if (roomInput == "2")
         {
             myBookings();
+            return;
+        } else if (roomInput == "3") {
+            myReservationsFunc();
+            return;
         }
     
     
@@ -528,7 +532,11 @@ void myBookings(){
     string bookingText;
     int bookingInput;
     system("CLS");
-    cout << "B O O K I N G S\n";
+    cout << "              B O O K I N G S\n";
+    cout << "<===========================================>\n";
+
+    cout << "       [1] Back  [2] Confirm a booking\n";
+    cout << "<===========================================>\n";
 
     booKings.open("bookings.txt", ios::in);
 
@@ -540,7 +548,7 @@ void myBookings(){
     if (booKings.is_open()) {
         while (getline(booKings, bookingText))
         {
-            cout << bookingText;
+            cout << bookingText << endl;
             
         }
         
@@ -548,8 +556,7 @@ void myBookings(){
 
     booKings.close();
 
-    cout << "       [1] Back  [2] Confirm a booking\n";
-    cout << "<===========================================>\n";
+    
 
     cin >> bookingInput;
 
@@ -601,63 +608,33 @@ void myBookings(){
 
 }
 
-void myReservations(){
+void myReservationsFunc(){
     
     system("CLS");
+    int reservationInput;
     while (true) {
-        fstream myReservations;
         
-        string transferReservation;
-        string confirmReservationUser;
-        string confirmReservationRoomNumber;
 
-        cout << "R E S E R V A T I O N  L I S T\n";
-        cout << "[1] Back\n";
+        cout << "       R E S E R V A T I O N  L I S T\n";
+        cout << "<===========================================>\n";
+        cout << "[1] Back    [2] Confirm     [3] Delete \n\n";
+        
 
         reservationListConfirmDelDisplay();
 
-        cout << "Enter User; [1] to go back: ";
-        cin >> confirmReservationUser;
+        cout << "Input: ";
+        cin >> reservationInput;
 
-        string findMatchUser;
-        string findMatchRoomNumber;
-        bool userMatch = false;
-
-        myReservations.open("reservedRoomsLists.txt", ios::in);
-
-        if (!myReservations.is_open()) {
-            cerr << "File not found!";
-            return;
-        } else if (myReservations.is_open()) {
-            while (myReservations >> findMatchUser >> findMatchRoomNumber) {
-                if (findMatchUser == confirmReservationUser) {
-                    userMatch = true;
-                    break;
-                }
-            }
-        }
-
-        myReservations.close();
-
-        
-
-        if (!userMatch) {
-            cout << "No user matching...";
-            continue;
-        } else if (userMatch == true) {
-            userConfirmation();
-
-        }
-
-        
-
-        
-
-        if (confirmReservationUser == "1") {
-            system("CLS");
+        if (reservationInput == 1){
             staffMenu();
             return;
+        } else if (reservationInput == 2){
+            userConfirmation();
+            return;
+        } else if (reservationInput == 3) {
+
         }
+
 
         if (cin.fail()) {
             safetyInput();
@@ -759,7 +736,6 @@ void reserveFileFunc() {
         string reserveRoomNumber;
         string reserveListOutput;
         string reserveUsername;
-        string roomNumbers[15] = {"101", "102", "103", "104", "105", "201", "202", "203", "204", "205", "301", "302", "303", "304", "305"};
 
         cout << "Input Username: ";
         cin >> reserveUsername;
@@ -827,13 +803,88 @@ void safetyInput() {
 }
 
 void userConfirmation() {
+    fstream myReservations;
+        
+    string transferReservation;
+    string confirmReservationUser;
+    string confirmReservationRoomNumber;
 
     int reservationOptions;
 
-    cout << "[1] Confirm    [2] Delete  [3] Cancel\n";
-    cout << "Options: ";
-    cin >> reservationOptions;
-    if (reservationOptions == 1);
+    while (true) {
+
+        system("CLS");
+        cout << "[1] Cancel    [2] Delete\n";
+
+        reservationListConfirmDelDisplay();
+    
+        cout << "Enter User: ";
+        cin >> confirmReservationUser;
+        cout << "Enter room number: ";
+        cin >> confirmReservationRoomNumber;
+
+        if (confirmReservationUser == "1") {
+            system("CLS");
+            staffMenu();
+            return;
+        }
+
+        string findMatchUser;
+        string findMatchRoomNumber;
+        bool userMatch = false;
+
+        myReservations.open("reservedRoomsLists.txt", ios::in);
+
+        if (!myReservations.is_open()) {
+            cerr << "File not found!";
+            return;
+        } else if (myReservations.is_open()) {
+            while (myReservations >> findMatchUser >> findMatchRoomNumber) {
+                if (confirmReservationUser == findMatchUser && confirmReservationRoomNumber == findMatchRoomNumber) {
+                    userMatch = true;
+                    break;
+                }
+            }
+        }
+
+        myReservations.close();
+
+        if (!userMatch) {
+            cout << "No user matching...";
+            continue;
+        } else if (userMatch == true) {
+            //userConfirmation();
+
+            fstream bookingList;
+            string addUser;
+            string userRoom;
+            bool succesConfirmed = false;
+
+            bookingList.open("bookings.txt", ios::app);
+            if (!bookingList.is_open()) {
+            cerr << "File not found!";
+            return;
+            } else if (bookingList.is_open()){
+                
+                cout << "Successfully Confirmed!\n";
+                bookingList << confirmReservationUser << " " << confirmReservationRoomNumber << endl;
+                system("pause");
+                system("CLS");
+                myReservationsFunc();
+                return;
+                
+            }
+
+        }
+
+        if (cin.fail() || confirmReservationRoomNumber != "1" || confirmReservationRoomNumber != "2" || confirmReservationUser != "2" || confirmReservationUser != "1") {
+            safetyInput();
+            cout << "Input error\n";
+            system("pause");
+            system("CLS");
+            continue;
+        }
+    }
 }
 
 void reservationListConfirmDelDisplay() {
