@@ -556,8 +556,6 @@ void myBookings(){
 
     booKings.close();
 
-    
-
     cin >> bookingInput;
 
         if (bookingInput == 2) {
@@ -744,13 +742,41 @@ void reserveFileFunc() {
         cout << "Input: ";
 
         cin >> reserveRoomNumber;
+
         fstream reserveListFile;
+        string userCheck;
+        string roomCheck;
+
+        reserveListFile.open("reservedRoomsLists.txt", ios::in);
+        
+        if (!reserveListFile.is_open()) {
+            cerr << "Error: Authenticator File is Missing!";
+            return;
+        } 
+        
+        if (reserveListFile.is_open()) {
+
+            while (reserveListFile >> userCheck >> roomCheck) {
+                if (reserveUsername == userCheck && reserveRoomNumber == roomCheck) {
+                    cout << "Reservation already exisiting! \n";
+                    system("pause");
+                    system("CLS");
+                    reserveFileFunc();
+                    return;
+                }
+            }
+        }
+
+        reserveListFile.close();
+
         reserveListFile.open("reservedRoomsLists.txt", ios::app);
         
         if (!reserveListFile.is_open()) {
             cerr << "Error: Authenticator File is Missing!";
             return;
-        } else if (reserveListFile.is_open()) {
+        } 
+        
+        if (reserveListFile.is_open()) {
             
             if (reserveRoomNumber == "101" || reserveRoomNumber ==  "102" || reserveRoomNumber ==  "103" || reserveRoomNumber ==  "104" || reserveRoomNumber ==  "105" || reserveRoomNumber ==  "201" || reserveRoomNumber ==  "202" || reserveRoomNumber ==  "203" || reserveRoomNumber ==  "204" || reserveRoomNumber ==  "205" || reserveRoomNumber ==  "301" || reserveRoomNumber ==  "302" || reserveRoomNumber ==  "303" || reserveRoomNumber ==  "304" || reserveRoomNumber ==  "305") {
                 
@@ -814,7 +840,10 @@ void userConfirmation() {
     while (true) {
 
         system("CLS");
-        cout << "[1] Cancel    [2] Delete\n";
+        cout << "           C O N F I R M   R E S E R V A T I O N\n";
+        cout << "<=========================================================>\n";
+        cout << "         [1] Cancel    [2] Delete Reservation\n";
+        cout << "     <===========================================>\n";
 
         reservationListConfirmDelDisplay();
     
@@ -877,6 +906,8 @@ void userConfirmation() {
 
         }
 
+        
+
         if (cin.fail() || confirmReservationRoomNumber != "1" || confirmReservationRoomNumber != "2" || confirmReservationUser != "2" || confirmReservationUser != "1") {
             safetyInput();
             cout << "Input error\n";
@@ -906,6 +937,31 @@ void reservationListConfirmDelDisplay() {
 }
 
 void bookARoom(){
+
+}
+
+void deleteUserReservation() {
+
+    system("CLS");
+
+    while (true) {
+        string selectReservation;
+
+        cout << "          D E L E T E    R E S E R V A T I O N\n";
+        cout << "<====================================================>\n";
+        cout << "       [1] Cancel    [2] Confirm Reservation\n";
+        cout << "    <===========================================>\n";
+
+        reserveRoomsDisplayFunc();
+
+        cout << "Select Reservation: ";
+        cin >> selectReservation;
+
+        if (selectReservation == "1") {
+            reserveFileFunc();
+            return;
+        }
+    }
 
 }
 
