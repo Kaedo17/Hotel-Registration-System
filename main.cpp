@@ -673,8 +673,8 @@ void customerMenu() {
         } else if(customerInput == 1) {
             safetyInput();
             system("CLS");
-           // main();
-            return;
+            main();
+            continue;
 
         } else if(customerInput ==3) {
             system("CLS");
@@ -728,7 +728,9 @@ void reserveRooms() {
 
 void reserveFileFunc() {
     system("CLS");
-    reserveRoomsDisplayFunc();
+    
+    while (true) {
+        reserveRoomsDisplayFunc();
 
 
         string reserveRoomNumber;
@@ -738,36 +740,32 @@ void reserveFileFunc() {
         cout << "Input Username: ";
         cin >> reserveUsername;
 
+        if (reserveUsername == "1") {
+                system("CLS");
+                reserveRooms();
+                return;
+                }
+
         cout << "Input room number to reserve eg. 201 \n";
         cout << "Input: ";
 
         cin >> reserveRoomNumber;
 
+        if (reserveRoomNumber == "1"){
+                system("CLS");
+                reserveFileFunc();
+                continue;
+                
+            }
+
         fstream reserveListFile;
         string userCheck;
         string roomCheck;
 
-        reserveListFile.open("reservedRoomsLists.txt", ios::in);
         
-        if (!reserveListFile.is_open()) {
-            cerr << "Error: Authenticator File is Missing!";
-            return;
-        } 
+
         
-        if (reserveListFile.is_open()) {
-
-            while (reserveListFile >> userCheck >> roomCheck) {
-                if (reserveUsername == userCheck && reserveRoomNumber == roomCheck) {
-                    cout << "Reservation already exisiting! \n";
-                    system("pause");
-                    system("CLS");
-                    reserveFileFunc();
-                    return;
-                }
-            }
-        }
-
-        reserveListFile.close();
+        
 
         reserveListFile.open("reservedRoomsLists.txt", ios::app);
         
@@ -790,14 +788,37 @@ void reserveFileFunc() {
                 cout << "Room not available\n";
                 system("pause");
                 system("CLS");
-                reserveFileFunc();
-                //continue;
+                continue;
             }
             
 
 
         }
+        reserveListFile.close();
+
+        reserveListFile.open("reservedRoomsLists.txt", ios::in);
         
+        if (!reserveListFile.is_open()) {
+            cerr << "Error: Authenticator File is Missing!";
+            return;
+        } 
+        
+        if (reserveListFile.is_open()) {
+
+            while (reserveListFile >> userCheck >> roomCheck) {
+                if (reserveUsername == userCheck && reserveRoomNumber == roomCheck) {
+                    cout << "Reservation already exisiting! \n";
+                    system("pause");
+                    system("CLS");
+                    reserveFileFunc();
+                    return;
+                }
+            }
+        }
+
+        reserveListFile.close();
+        
+    }
         
     }
 
