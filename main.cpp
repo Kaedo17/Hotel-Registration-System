@@ -36,8 +36,7 @@ int main() {
 
     do
     {
-        
-        
+
         cout << "                   Sign In\n";
         cout << "<====================================>\n";
         cout << "  [1] Staff\n";
@@ -54,7 +53,7 @@ int main() {
             cout << "<====================================>\n";
             system("pause");
             system("CLS");
-            main();
+            continue;
             
 
         }
@@ -65,11 +64,13 @@ int main() {
         } else if (userInput ==2) {
             customerMenu();
             system("CLS");
+        } else if (userInput == 3) {
+            exit(0);
         }
 
 
         
-        } while (userInput !=3);
+        } while (true);
 
         return 0;
     
@@ -753,7 +754,7 @@ void reserveFileFunc() {
 
         if (reserveRoomNumber == "1"){
                 system("CLS");
-                reserveFileFunc();
+                
                 continue;
                 
             }
@@ -870,14 +871,23 @@ void userConfirmation() {
     
         cout << "Enter User: ";
         cin >> confirmReservationUser;
-        cout << "Enter room number: ";
-        cin >> confirmReservationRoomNumber;
 
         if (confirmReservationUser == "1") {
             system("CLS");
             staffMenu();
             return;
         }
+
+        cout << "Enter room number: ";
+        cin >> confirmReservationRoomNumber;
+
+        if (confirmReservationRoomNumber == "1") {
+            system("CLS");
+            userConfirmation();
+            return;
+        }
+
+        
 
         string findMatchUser;
         string findMatchRoomNumber;
@@ -903,7 +913,6 @@ void userConfirmation() {
             cout << "No user matching...";
             continue;
         } else if (userMatch == true) {
-            //userConfirmation();
 
             fstream bookingList;
             string addUser;
