@@ -549,54 +549,62 @@ fstream booKings;
 void myBookings()
 {
 
-    while (true) {
+    while (true)
+    {
         system("CLS");
-    string bookingText;
-    int bookingInput;
-    system("CLS");
-    cout << "                     B O O K I N G S\n";
-    cout << "      <===========================================>\n";
+        string bookingText;
+        int bookingInput;
+        system("CLS");
+        cout << "                     B O O K I N G S\n";
+        cout << "      <===========================================>\n";
 
-    cout << "           [1] Back  [2] Confirm a booking\n";
-    cout << "      <===========================================>\n\n";
+        cout << "           [1] Back  [2] Confirm a booking\n";
+        cout << "      <===========================================>\n\n";
 
-    booKings.open("bookings.txt", ios::in);
+        booKings.open("bookings.txt", ios::in);
 
-    if (!booKings.is_open())
-    {
-        cout << "Available file is missing\n";
-        return;
-    }
-
-    if (booKings.is_open())
-    {
-        while (getline(booKings, bookingText))
+        if (!booKings.is_open())
         {
-            cout << "       [*] " << bookingText << endl;
-        }
-    }
-
-    booKings.close();
-    cout << "\n     <===========================================>\n";
-
-    cout << "       Input: ";
-
-    cin >> bookingInput;
-
-    if (bookingInput == 1) {
-        staffMenu();
-        return;
-    }  else if (bookingInput == 2) {
-        confirmBooking();
+            cout << "Available file is missing\n";
+            return;
         }
 
-        if (cin.fail()){
+        if (booKings.is_open())
+        {
+            while (getline(booKings, bookingText))
+            {
+                cout << "       [*] " << bookingText << endl;
+            }
+        }
+
+        booKings.close();
+        cout << "\n     <===========================================>\n";
+
+        cout << "       Input: ";
+
+        cin >> bookingInput;
+
+        if (bookingInput == 1)
+        {
+            staffMenu();
+            return;
+        }
+        else if (bookingInput == 2)
+        {
+            confirmBooking();
+        }
+
+        if (cin.fail())
+        {
             safetyInput();
             cout << "Input error\n";
             system("pause");
             system("CLS");
-            continue;;
-        } else if (bookingInput != 1 || bookingInput !=2) {
+            continue;
+            ;
+        }
+        else if (bookingInput != 1 || bookingInput != 2)
+        {
             safetyInput();
             cout << "Input error";
             system("pause");
@@ -1203,11 +1211,13 @@ void deleteUserReservation()
     }
 }
 
-void confirmBooking() {
-    
+void confirmBooking()
+{
+
     system("CLS");
 
-    while (true) {
+    while (true)
+    {
         string bookingUser;
         string bookingStringDisplay;
         string bookingRoomNumber;
@@ -1221,11 +1231,15 @@ void confirmBooking() {
         cout << "      <===========================================>\n\n";
 
         bookingDisplay.open("bookings.txt", ios::in);
-        if (!bookingDisplay.is_open()) {
+        if (!bookingDisplay.is_open())
+        {
             cerr << "Error: Booking File is Missing!";
             return;
-        } else if (bookingDisplay.is_open()) {
-            while (getline(bookingDisplay, bookingStringDisplay)) {
+        }
+        else if (bookingDisplay.is_open())
+        {
+            while (getline(bookingDisplay, bookingStringDisplay))
+            {
                 cout << "      [*]" << bookingStringDisplay << endl;
             }
         }
@@ -1237,7 +1251,8 @@ void confirmBooking() {
         cout << "           Enter username: ";
         cin >> bookingUser;
 
-        if (bookingUser == "1") {
+        if (bookingUser == "1")
+        {
             system("CLS");
             myBookings();
             return;
@@ -1246,12 +1261,11 @@ void confirmBooking() {
         cout << "Enter room number: ";
         cin >> bookingRoomNumber;
 
-        if (bookingRoomNumber == "1") {
+        if (bookingRoomNumber == "1")
+        {
             system("CLS");
             continue;
         }
-        
-        
 
         string line;
         string lineMatch;
@@ -1263,28 +1277,36 @@ void confirmBooking() {
 
         bookingFile.open("bookings.txt", ios::in);
         tempFile.open("temp.txt", ios::out);
-        if (!bookingFile.is_open() || !tempFile.is_open()) {
+        if (!bookingFile.is_open() || !tempFile.is_open())
+        {
             cerr << "Error: Booking File is Missing!";
             return;
-        } else if (bookingFile.is_open()) {
-            while (getline(bookingFile, line)) {
-                if (line == bookingUser + " " + bookingRoomNumber) {
+        }
+        else if (bookingFile.is_open())
+        {
+            while (getline(bookingFile, line))
+            {
+                if (line == bookingUser + " " + bookingRoomNumber)
+                {
                     isMatched = true;
 
                     fstream transferConfirmed;
 
                     transferConfirmed.open("confirmedBookings.txt", ios::app);
-                    if (!transferConfirmed.is_open()) {
+                    if (!transferConfirmed.is_open())
+                    {
                         cerr << "Error: Confirmed Bookings File is Missing!";
                         return;
-                    } else if (transferConfirmed.is_open()) {
+                    }
+                    else if (transferConfirmed.is_open())
+                    {
                         transferConfirmed << line << endl;
                     }
 
                     transferConfirmed.close();
-                    
-                    
-                } else {
+                }
+                else
+                {
                     tempFile << line << endl;
                 }
             }
@@ -1293,25 +1315,24 @@ void confirmBooking() {
         bookingFile.close();
         tempFile.close();
 
-        if (isMatched) {
-            
-            
+        if (isMatched)
+        {
+
             remove("bookings.txt");
             rename("temp.txt", "bookings.txt");
             cout << "Booking Confirmed!\n";
             system("pause");
             system("CLS");
             continue;
-        } else {
+        }
+        else
+        {
             cout << "Booking not found!" << endl;
             remove("temp.txt");
             system("pause");
             system("CLS");
             continue;
         }
-
-        
-
     }
 }
 // https://stackoverflow.com/questions/29859796/c-auto-vs-auto#:~:text=So%2C%20in%20a%20nutshell%2C%20if,you%20want%20references%2C%20use%20auto%26%20.
