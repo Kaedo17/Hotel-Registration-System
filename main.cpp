@@ -18,17 +18,18 @@ void availRooms();
 void myBookings();
 void myReservationsFunc();
 void customerMenu();
-void reserveRooms();
+// void reserveRooms();
 void reserveFileFunc();
 void bookARoom();
 void safetyInput();
 void reserveRoomsDisplayFunc();
 void userConfirmation();
 void reservationListConfirmDelDisplay();
+void deleteUserReservation();
+void confirmBooking();
 
-
-
-int main() {
+int main()
+{
 
     int userInput;
 
@@ -46,7 +47,8 @@ int main() {
         cout << "Input: ";
         cin >> userInput;
 
-        if (cin.fail() || userInput >=4 || userInput <=0) {
+        if (cin.fail() || userInput >= 4 || userInput <= 0)
+        {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. Please enter a number between 1 to 3.\n";
@@ -54,76 +56,80 @@ int main() {
             system("pause");
             system("CLS");
             continue;
-            
-
         }
 
-        if (userInput == 1){
+        if (userInput == 1)
+        {
             staffSignIn();
             system("CLS");
-        } else if (userInput ==2) {
+        }
+        else if (userInput == 2)
+        {
             customerMenu();
             system("CLS");
-        } else if (userInput == 3) {
+        }
+        else if (userInput == 3)
+        {
             exit(0);
         }
 
+    } while (true);
 
-        
-        } while (true);
-
-        return 0;
-    
+    return 0;
 }
 
-void staffSignIn(){
+void staffSignIn()
+{
     system("CLS");
-        string staffUserName;
-        string staffPasswd;
-        int staffAcc;
+    string staffUserName;
+    string staffPasswd;
+    int staffAcc;
 
-        while (true) {
-            cout << "           Staff Sign In\n";
-            cout << "<====================================>\n";
-            cout << "  [1] Login\n";
-            cout << "  [2] Sign in\n";
-            cout << "  [3] Back\n";
-            cout << "<====================================>\n";
-            cout << "Input: ";
-            cin >> staffAcc;
+    while (true)
+    {
+        cout << "           Staff Sign In\n";
+        cout << "<====================================>\n";
+        cout << "  [1] Login\n";
+        cout << "  [2] Sign in\n";
+        cout << "  [3] Back\n";
+        cout << "<====================================>\n";
+        cout << "Input: ";
+        cin >> staffAcc;
 
-            //error handling if input is not what is expected
+        // error handling if input is not what is expected
 
-            if (cin.fail() || staffAcc >= 4 || staffAcc <= 0) {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-              
-                cout << "Invalid input. Please enter a number between 1 to 3.\n";
-                cout << "<===========================================>\n";
-                system("pause");
-                system("CLS");
-                continue;
-                
+        if (cin.fail() || staffAcc >= 4 || staffAcc <= 0)
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-            } 
-            
-            if (staffAcc ==1) {
-                loginMenu();
-                break;
-            } else if (staffAcc == 2){
-                signInMenu();
-                break;
-            } else if (staffAcc == 3){
-                return;
-                break;
-            }
+            cout << "Invalid input. Please enter a number between 1 to 3.\n";
+            cout << "<===========================================>\n";
+            system("pause");
+            system("CLS");
+            continue;
         }
 
-            
-    
+        if (staffAcc == 1)
+        {
+            loginMenu();
+            break;
+        }
+        else if (staffAcc == 2)
+        {
+            signInMenu();
+            break;
+        }
+        else if (staffAcc == 3)
+        {
+            return;
+            break;
+        }
+    }
 }
 
-void loginMenu(){
+void loginMenu()
+{
 
     string staffUserName;
     string staffPasswd;
@@ -133,165 +139,175 @@ void loginMenu(){
     while (true)
     {
         system("CLS");
-    cout << "           Login [Type 'Back' to return]\n";
-    cout << "<====================================>\n";
-    cout << "[1] Back\n";
-    cout << "[2] Forgot Password\n";
-    cout << "Username: ";
-    cin >> staffUserName;
+        cout << "           Login [Type 'Back' to return]\n";
+        cout << "<====================================>\n";
+        cout << "[1] Back\n";
+        cout << "[2] Forgot Password\n";
+        cout << "Username: ";
+        cin >> staffUserName;
 
-    if (staffUserName == "1") { // added back option in case of user mis clicked an option
-        staffSignIn();
-        system("CLS");
-        return;
+        if (staffUserName == "1")
+        { // added back option in case of user mis clicked an option
+            staffSignIn();
+            system("CLS");
+            return;
+        }
+        else if (staffUserName == "2")
+        {
+            forgotPass();
+            system("CLS");
+            return;
+        }
 
-    } else if (staffUserName == "2") {
-        forgotPass();
-        system("CLS");
-        return;
-        
-    }
+        cout << "Password: ";
+        cin >> staffPasswd;
 
-    
+        if (staffPasswd == "1")
+        {
+            system("CLS");
+            continue;
+        }
+        else if (staffPasswd == "2")
+        {
+            forgotPass();
+            system("CLS");
+            return;
+        }
 
-    cout << "Password: ";
-    cin >> staffPasswd;
+        string fileUserName;
+        string filePasswd;
 
-    if (staffPasswd == "1") {
-        system("CLS");
-        continue;
-    } else if (staffPasswd == "2") {
-        forgotPass();
-        system("CLS");
-        return;
-        
-    }
+        authenticator.open("authenticator.txt", ios::in);
+        if (!authenticator.is_open())
+        {
+            cerr << "Error: Authenticator File is Missing!";
+            return;
+        }
 
-    string fileUserName;
-    string filePasswd;
+        // loop that reads data from the txt
+        // transfers data from the text to a variable "fileUserName and filePasswd"
+        while (authenticator >> fileUserName >> filePasswd)
+        {
 
-    authenticator.open("authenticator.txt", ios::in);
-    if (!authenticator.is_open()){
-        cerr << "Error: Authenticator File is Missing!";
-        return;
-    }
+            if (fileUserName == staffUserName && filePasswd == staffPasswd)
+            {
+                userAuthenticated = true;
+                break;
+            }
+        }
 
-    // loop that reads data from the txt
-// transfers data from the text to a variable "fileUserName and filePasswd"
-    while (authenticator >> fileUserName >> filePasswd) {
-        
-        if (fileUserName == staffUserName && filePasswd == staffPasswd) {
-            userAuthenticated = true;
-            break;
+        authenticator.close();
+
+        if (userAuthenticated == true)
+        { // if login successful, goes to the option for STAFF
+            staffMenu();
+            system("CLS");
+            return;
+        }
+        else if (userAuthenticated == false)
+        { // if login is unsuccessful, shows login error
+            loginError();
+            system("CLS");
+            return;
         }
     }
-
-    authenticator.close();
-
-    if (userAuthenticated == true){ // if login successful, goes to the option for STAFF
-        staffMenu();
-        system("CLS");
-        return;
-
-    } else if (userAuthenticated == false){ // if login is unsuccessful, shows login error
-        loginError();
-        system("CLS");
-        return;
-    }
-    }
-    
-
-
-
 }
 
-void signInMenu(){
+void signInMenu()
+{
     system("CLS"); // clears the console screen
 
     string signInUsername;
     string signInPasswd;
 
-    while (true) {
+    while (true)
+    {
         cout << "           Sign In\n";
-    cout << "[1] Back\n";
-    cout << "Create Username: ";
-    cin >> signInUsername;
+        cout << "[1] Back\n";
+        cout << "Create Username: ";
+        cin >> signInUsername;
 
-    // back option if user want to go back
+        // back option if user want to go back
 
-    if (signInUsername == "1") {
-        staffSignIn();
-        system("CLS");
-        return;
-    }
-
-    cout << "Create Password: ";
-    cin >> signInPasswd;
-
-    if (signInPasswd == "1") {
-        system("CLS");
-        continue;
-    }
-
-// checks if the txt file is present
-
-    authenticator.open("authenticator.txt", ios::in); // opens the authenticator txt file
-    if (!authenticator.is_open()){
-        cerr << "Error: Authenticator File is Missing!";
-        return;
-    }
-
-    string accExisted;
-    bool usernameExists = false;
-
-    while (authenticator >> accExisted) { //gets the username and password from the text file and assign in to the variable accExisted
-        if (accExisted == signInUsername) { //if the user input matches one of the username 
-            usernameExists = true;
-            break;
+        if (signInUsername == "1")
+        {
+            staffSignIn();
+            system("CLS");
+            return;
         }
-    }
 
-    authenticator.close();
+        cout << "Create Password: ";
+        cin >> signInPasswd;
 
-    if (usernameExists == true) {
-        cout << "Username already exists!\n";
-        cout << "<===========================================>\n";
-        system("pause");
-        signInMenu();
-        system("CLS");
+        if (signInPasswd == "1")
+        {
+            system("CLS");
+            continue;
+        }
+
+        // checks if the txt file is present
+
+        authenticator.open("authenticator.txt", ios::in); // opens the authenticator txt file
+        if (!authenticator.is_open())
+        {
+            cerr << "Error: Authenticator File is Missing!";
+            return;
+        }
+
+        string accExisted;
+        bool usernameExists = false;
+
+        while (authenticator >> accExisted)
+        { // gets the username and password from the text file and assign in to the variable accExisted
+            if (accExisted == signInUsername)
+            { // if the user input matches one of the username
+                usernameExists = true;
+                break;
+            }
+        }
+
+        authenticator.close();
+
+        if (usernameExists == true)
+        {
+            cout << "Username already exists!\n";
+            cout << "<===========================================>\n";
+            system("pause");
+            signInMenu();
+            system("CLS");
+            return;
+        }
+
+        authenticator.open("authenticator.txt", ios::app);
+        if (!authenticator.is_open())
+        {
+            cerr << "Error: Authenticator File is Missing!";
+            return;
+        }
+
+        // if the creation of the username and password is successfull then the code below wil insert
+        // the username and password to the file
+
+        authenticator << signInUsername << " " << signInPasswd << endl;
+        authenticator.close(); // will close the file
+
+        signInSuccess(); // display sign in was successful
+
         return;
     }
-
-    authenticator.open("authenticator.txt", ios::app);
-    if (!authenticator.is_open()){
-        cerr << "Error: Authenticator File is Missing!";
-        return;
-    }
-
-    // if the creation of the username and password is successfull then the code below wil insert
-    // the username and password to the file
-
-    authenticator << signInUsername<< " " << signInPasswd << endl;
-    authenticator.close(); // will close the file
-
-    signInSuccess(); // display sign in was successful
-
-    return;
-    }
-    
-
 }
 
-// the things staff can do 
+// the things staff can do
 
-void staffMenu(){
+void staffMenu()
+{
 
     system("CLS");
 
     int userInputStaff;
-    
-    
-    while (true) {
+
+    while (true)
+    {
 
         cout << "               || STAFF MENU ||\n";
         cout << "<===========================================>\n";
@@ -302,7 +318,8 @@ void staffMenu(){
         cout << "Input: ";
         cin >> userInputStaff;
 
-        if (cin.fail() || userInputStaff >=5 || userInputStaff <=0){
+        if (cin.fail() || userInputStaff >= 5 || userInputStaff <= 0)
+        {
 
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -312,39 +329,43 @@ void staffMenu(){
             system("pause");
             system("CLS");
             continue;
-            
         }
 
-        if (userInputStaff == 1) {
+        if (userInputStaff == 1)
+        {
             availRooms();
             system("CLS");
             return;
-            
-        } else if (userInputStaff == 2){
+        }
+        else if (userInputStaff == 2)
+        {
             myBookings();
             system("CLS");
             return;
-        } else if (userInputStaff == 3){
+        }
+        else if (userInputStaff == 3)
+        {
             myReservationsFunc();
             system("CLS");
             return;
-        } else if (userInputStaff == 4){
+        }
+        else if (userInputStaff == 4)
+        {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             system("CLS");
+            main();
             return;
-            }
-
-        
+        }
     }
-    
 
     system("CLS");
 }
 
 // login error
 
-void loginError(){
+void loginError()
+{
 
     cout << "<===========================================>\n";
     cout << "Wrong Credentials\n";
@@ -352,13 +373,12 @@ void loginError(){
     system("pause");
     system("CLS");
     loginMenu();
-    
-
 }
 
 // successful login message
 
-void signInSuccess(){
+void signInSuccess()
+{
 
     cout << "<===========================================>\n";
     cout << "Sign in Success!\n";
@@ -366,17 +386,14 @@ void signInSuccess(){
     system("pause");
     system("CLS");
     staffSignIn();
-    
-
-    
-
 }
 
-void forgotPass(){
+void forgotPass()
+{
     system("CLS");
     string entrUser;
     string newPasswd;
-    
+
     while (true)
     {
         cout << "       F O R G O T    P A S S W O R D\n";
@@ -387,7 +404,8 @@ void forgotPass(){
         cout << "Enter Username: ";
         cin >> entrUser;
 
-        if (entrUser == "1") {
+        if (entrUser == "1")
+        {
             staffSignIn();
             return;
         }
@@ -395,76 +413,79 @@ void forgotPass(){
         cout << "Enter New Password: ";
         cin >> newPasswd;
 
-        if (newPasswd == "1") {
+        if (newPasswd == "1")
+        {
             forgotPass();
             return;
         }
 
         authenticator.open("authenticator.txt", ios::in);
-        if (!authenticator.is_open()) {
+        if (!authenticator.is_open())
+        {
             cerr << "Authenticator file is missing!";
             return;
         }
 
-        
-
-        vector <pair<string, string>> userRecords;
+        vector<pair<string, string>> userRecords;
         bool userFound = false;
 
         string forgotUser;
         string oldPass;
 
-        while (authenticator >> forgotUser >> oldPass) {
-            if(entrUser == forgotUser) {
+        while (authenticator >> forgotUser >> oldPass)
+        {
+            if (entrUser == forgotUser)
+            {
                 userRecords.push_back(make_pair(forgotUser, newPasswd));
                 userFound = true;
-            } else {
+            }
+            else
+            {
                 userRecords.push_back(make_pair(forgotUser, oldPass));
             }
-            
         }
 
         authenticator.close();
 
-        if (!userFound) {
+        if (!userFound)
+        {
             cout << "User not found!\n";
             return;
         }
 
         fstream updatedAuth("authenticator.txt", ios::out | ios::trunc);
 
-        if (!updatedAuth.is_open()){
+        if (!updatedAuth.is_open())
+        {
             cerr << "Authenticator file not found!\n";
             return;
         }
 
-        for (const auto& record : userRecords) {
+        for (const auto &record : userRecords)
+        {
             updatedAuth << record.first << " " << record.second << endl;
         }
 
         updatedAuth.close();
 
         cout << "<===========================================>\n";
-        
+
         cout << "Password successfully updated!\n";
         system("pause");
         system("CLS");
         staffSignIn();
         return;
-        }
-    
-
+    }
 }
 
 fstream roomOne;
 
-void availRooms(){
-    
-    
+void availRooms()
+{
+
     string roomsOne;
     string roomInput;
 
-    
     while (true)
     {
 
@@ -474,168 +495,150 @@ void availRooms(){
         cout << "<===========================================>\n";
         roomOne.open("firstFloorRooms.txt", ios::in);
 
-        if (!roomOne.is_open()) {
+        if (!roomOne.is_open())
+        {
             cout << "Available room file is missing\n";
             return;
         }
         if (roomOne.is_open())
         {
-            while (getline(roomOne, roomsOne)) {
-            cout << roomsOne << endl;
+            while (getline(roomOne, roomsOne))
+            {
+                cout << roomsOne << endl;
             }
         }
 
         roomOne.close();
-    
-    
-        
 
         cout << "Input: ";
 
         cin >> roomInput;
 
-        if (cin.fail() || roomInput >= "4" || roomInput <="0") {
+        if (cin.fail() || roomInput >= "4" || roomInput <= "0")
+        {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input\n";
             system("pause");
             system("CLS");
             continue;
-
-
         }
 
-        if (roomInput == "1") {
-            system ("CLS");
+        if (roomInput == "1")
+        {
+            system("CLS");
             staffMenu();
-            
+
             return;
-        } else if (roomInput == "2")
+        }
+        else if (roomInput == "2")
         {
             myBookings();
             return;
-        } else if (roomInput == "3") {
+        }
+        else if (roomInput == "3")
+        {
             myReservationsFunc();
             return;
         }
-    
-    
-    
-    }   
-
-    
-    
+    }
 }
 
 fstream booKings;
 
-void myBookings(){
+void myBookings()
+{
+
+    while (true) {
+        system("CLS");
     string bookingText;
     int bookingInput;
     system("CLS");
-    cout << "              B O O K I N G S\n";
-    cout << "<===========================================>\n";
+    cout << "                     B O O K I N G S\n";
+    cout << "      <===========================================>\n";
 
-    cout << "       [1] Back  [2] Confirm a booking\n";
-    cout << "<===========================================>\n";
+    cout << "           [1] Back  [2] Confirm a booking\n";
+    cout << "      <===========================================>\n\n";
 
     booKings.open("bookings.txt", ios::in);
 
-    if (!booKings.is_open()) {
+    if (!booKings.is_open())
+    {
         cout << "Available file is missing\n";
         return;
     }
 
-    if (booKings.is_open()) {
+    if (booKings.is_open())
+    {
         while (getline(booKings, bookingText))
         {
-            cout << bookingText << endl;
-            
+            cout << "       [*] " << bookingText << endl;
         }
-        
     }
 
     booKings.close();
+    cout << "\n     <===========================================>\n";
+
+    cout << "       Input: ";
 
     cin >> bookingInput;
 
-        if (bookingInput == 2) {
-            string bookingNumber;
+    if (bookingInput == 1) {
+        staffMenu();
+        return;
+    }  else if (bookingInput == 2) {
+        confirmBooking();
+        }
+
+        if (cin.fail()){
+            safetyInput();
+            cout << "Input error\n";
+            system("pause");
             system("CLS");
-
-            booKings.open("bookings.txt", ios::in);
-
-            if (!booKings.is_open()) {
-                cout << "Available file is missing\n";
-                return;
-            }
-
-            if (booKings.is_open()) {
-                while (getline(booKings, bookingText))
-                {
-                    cout << bookingText;
-                    
-                }
-                
-            }
-
-            string bookingConfirmed;
-
-            cout << "Confirm number: ";
-            cin >> bookingNumber;
-
-            roomOne.open("fistFloorRooms.txt", ios::in);
-            if (!roomOne.is_open()) {
-                cout << "Available room file is missing\n";
-                return;
-            }
-
-            if (roomOne.is_open()){
-                while (getline(roomOne, bookingConfirmed))
-                {
-                    if (bookingConfirmed == bookingNumber){
-
-                    }
-                }
-                
-            }
-
-            roomOne.close();
-
-            
+            continue;;
+        } else if (bookingInput != 1 || bookingInput !=2) {
+            safetyInput();
+            cout << "Input error";
+            system("pause");
+            system("CLS");
+            continue;
+        }
     }
-
 }
 
-void myReservationsFunc(){
-    
+void myReservationsFunc()
+{
+
     system("CLS");
     int reservationInput;
-    while (true) {
-        
+    while (true)
+    {
 
         cout << "       R E S E R V A T I O N  L I S T\n";
         cout << "<===========================================>\n";
         cout << "[1] Back    [2] Confirm     [3] Delete \n\n";
-        
 
         reservationListConfirmDelDisplay();
 
         cout << "Input: ";
         cin >> reservationInput;
 
-        if (reservationInput == 1){
+        if (reservationInput == 1)
+        {
             staffMenu();
             return;
-        } else if (reservationInput == 2){
+        }
+        else if (reservationInput == 2)
+        {
             userConfirmation();
             return;
-        } else if (reservationInput == 3) {
-
+        }
+        else if (reservationInput == 3)
+        {
         }
 
-
-        if (cin.fail()) {
+        if (cin.fail())
+        {
             safetyInput();
             cout << "Input error\n";
             system("pause");
@@ -643,11 +646,10 @@ void myReservationsFunc(){
             continue;
         }
     }
-
-    
 }
 
-void customerMenu() {
+void customerMenu()
+{
     system("CLS");
     int customerInput;
     while (true)
@@ -664,34 +666,38 @@ void customerMenu() {
 
         cin >> customerInput;
 
-        if(cin.fail() || customerInput >=4 || customerInput <=0) {
+        if (cin.fail() || customerInput >= 4 || customerInput <= 0)
+        {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid Input\n";
             system("pause");
             system("CLS");
             continue;
-        } else if(customerInput == 1) {
+        }
+        else if (customerInput == 1)
+        {
             safetyInput();
             system("CLS");
             main();
             continue;
-
-        } else if(customerInput ==3) {
+        }
+        else if (customerInput == 3)
+        {
             system("CLS");
-            reserveRooms();
+            reserveFileFunc();
             return;
-        } else if (customerInput == 2) {
+        }
+        else if (customerInput == 2)
+        {
             system("CLS");
             bookARoom();
         }
-
     }
-     
 }
 
-void reserveRooms() {
-    
+/* void reserveRooms() {
+
     int reserveInput;
 
         while (true)
@@ -703,7 +709,7 @@ void reserveRooms() {
             cout << "Input: ";
             cin >> reserveInput;
 
-            
+
 
             if(cin.fail() || reserveInput >=4 || reserveInput <=0) {
                 cin.clear();
@@ -720,19 +726,20 @@ void reserveRooms() {
                 reserveFileFunc();
                 return;
             }
-        
-    
+
+
     }
-    
-    
-}
 
-void reserveFileFunc() {
+
+} */
+
+void reserveFileFunc()
+{
     system("CLS");
-    
-    while (true) {
-        reserveRoomsDisplayFunc();
 
+    while (true)
+    {
+        reserveRoomsDisplayFunc();
 
         string reserveRoomNumber;
         string reserveListOutput;
@@ -741,73 +748,117 @@ void reserveFileFunc() {
         cout << "Input Username: ";
         cin >> reserveUsername;
 
-        if (reserveUsername == "1") {
-                system("CLS");
-                reserveRooms();
-                return;
-                }
+        if (reserveUsername == "1")
+        {
+            system("CLS");
+            customerMenu();
+            return;
+        }
+        else if (reserveUsername == "2")
+        {
+            system("CLS");
+            bookARoom();
+            return;
+        }
 
         cout << "Input room number to reserve eg. 201 \n";
         cout << "Input: ";
 
         cin >> reserveRoomNumber;
 
-        if (reserveRoomNumber == "1"){
-                system("CLS");
-                
-                continue;
-                
-            }
+        if (reserveRoomNumber == "1")
+        {
+            system("CLS");
+
+            continue;
+        }
+        else if (reserveRoomNumber == "2")
+        {
+            system("CLS");
+            bookARoom();
+            return;
+        }
 
         fstream reserveListFile;
         string userCheck;
         string roomCheck;
 
-        
+        bool roomGoods = false;
 
-        
-        
+        fstream roomsLists;
+        string roomListsAuth;
+
+        roomsLists.open("roomNumbers.txt", ios::in);
+        if (!roomsLists.is_open())
+        {
+            cerr << "Error: Rooms Lists File is Missing!";
+            return;
+        }
+        else if (roomsLists.is_open())
+        {
+            while (getline(roomsLists, roomListsAuth))
+            {
+                if (reserveRoomNumber == roomListsAuth)
+                {
+                    roomGoods = true;
+                    break;
+                }
+                else
+                {
+                    roomGoods = false;
+                    break;
+                }
+            }
+        }
+
+        roomsLists.close();
 
         reserveListFile.open("reservedRoomsLists.txt", ios::app);
-        
-        if (!reserveListFile.is_open()) {
+
+        if (!reserveListFile.is_open())
+        {
             cerr << "Error: Authenticator File is Missing!";
             return;
-        } 
-        
-        if (reserveListFile.is_open()) {
-            
-            if (reserveRoomNumber == "101" || reserveRoomNumber ==  "102" || reserveRoomNumber ==  "103" || reserveRoomNumber ==  "104" || reserveRoomNumber ==  "105" || reserveRoomNumber ==  "201" || reserveRoomNumber ==  "202" || reserveRoomNumber ==  "203" || reserveRoomNumber ==  "204" || reserveRoomNumber ==  "205" || reserveRoomNumber ==  "301" || reserveRoomNumber ==  "302" || reserveRoomNumber ==  "303" || reserveRoomNumber ==  "304" || reserveRoomNumber ==  "305") {
-                
+        }
+
+        if (reserveListFile.is_open())
+        {
+
+            if (roomGoods == true)
+            {
+
                 cout << "Successfully Reserved!\n";
                 system("pause");
                 reserveListFile << reserveUsername << " " << reserveRoomNumber << endl;
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                reserveRooms();
-            } else {
+                continue;
+            }
+            else
+            {
                 cout << "Room not available\n";
                 system("pause");
                 system("CLS");
                 continue;
             }
-            
-
-
         }
         reserveListFile.close();
 
         reserveListFile.open("reservedRoomsLists.txt", ios::in);
-        
-        if (!reserveListFile.is_open()) {
+
+        if (!reserveListFile.is_open())
+        {
             cerr << "Error: Authenticator File is Missing!";
             return;
-        } 
-        
-        if (reserveListFile.is_open()) {
+        }
 
-            while (reserveListFile >> userCheck >> roomCheck) {
-                if (reserveUsername == userCheck && reserveRoomNumber == roomCheck) {
+        if (reserveListFile.is_open())
+        {
+
+            while (reserveListFile >> userCheck >> roomCheck)
+            {
+                if (reserveUsername == userCheck && reserveRoomNumber == roomCheck)
+                {
                     cout << "Reservation already exisiting! \n";
                     system("pause");
                     system("CLS");
@@ -818,76 +869,93 @@ void reserveFileFunc() {
         }
 
         reserveListFile.close();
-        
     }
-        
-    }
+}
 
-void reserveRoomsDisplayFunc() {
+void reserveRoomsDisplayFunc()
+{
     fstream theReservedList;
     string theRooms;
     cout << "               Room Reservation\n";
-        cout << "<===========================================>\n";
-        cout << "  [1] Back    [2] Choose room number \n";
+    cout << "<===========================================>\n";
+    cout << "  [1] Back     [2] Book \n";
 
-        theReservedList.open("availRooms.txt", ios::in);
+    theReservedList.open("availRooms.txt", ios::in);
 
-        if (!theReservedList.is_open()) {
-            cout << "Available room file is missing\n";
-            return;
-        } else if (theReservedList.is_open())
+    if (!theReservedList.is_open())
+    {
+        cout << "Available room file is missing\n";
+        return;
+    }
+    else if (theReservedList.is_open())
+    {
+        while (getline(theReservedList, theRooms))
         {
-            while (getline(theReservedList, theRooms)) {
             // system("CLS");
-                cout << theRooms << endl;
-            }
+            cout << theRooms << endl;
         }
-        theReservedList.close();
+    }
+    theReservedList.close();
 }
 
-void safetyInput() {
+void safetyInput()
+{
     cin.clear();
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
-void userConfirmation() {
+void userConfirmation()
+{
     fstream myReservations;
-        
+
     string transferReservation;
     string confirmReservationUser;
     string confirmReservationRoomNumber;
 
     int reservationOptions;
 
-    while (true) {
+    while (true)
+    {
 
         system("CLS");
         cout << "           C O N F I R M   R E S E R V A T I O N\n";
         cout << "<=========================================================>\n";
-        cout << "         [1] Cancel    [2] Delete Reservation\n";
+        cout << "         [1] Back    [2] Delete Reservation\n";
         cout << "     <===========================================>\n";
 
         reservationListConfirmDelDisplay();
-    
+
         cout << "Enter User: ";
         cin >> confirmReservationUser;
 
-        if (confirmReservationUser == "1") {
+        if (confirmReservationUser == "1")
+        {
             system("CLS");
             staffMenu();
+            return;
+        }
+        else if (confirmReservationUser == "2")
+        {
+            system("CLS");
+            deleteUserReservation();
             return;
         }
 
         cout << "Enter room number: ";
         cin >> confirmReservationRoomNumber;
 
-        if (confirmReservationRoomNumber == "1") {
+        if (confirmReservationRoomNumber == "1")
+        {
             system("CLS");
             userConfirmation();
             return;
         }
-
-        
+        else if (confirmReservationRoomNumber == "2")
+        {
+            system("CLS");
+            deleteUserReservation();
+            return;
+        }
 
         string findMatchUser;
         string findMatchRoomNumber;
@@ -895,12 +963,17 @@ void userConfirmation() {
 
         myReservations.open("reservedRoomsLists.txt", ios::in);
 
-        if (!myReservations.is_open()) {
+        if (!myReservations.is_open())
+        {
             cerr << "File not found!";
             return;
-        } else if (myReservations.is_open()) {
-            while (myReservations >> findMatchUser >> findMatchRoomNumber) {
-                if (confirmReservationUser == findMatchUser && confirmReservationRoomNumber == findMatchRoomNumber) {
+        }
+        else if (myReservations.is_open())
+        {
+            while (myReservations >> findMatchUser >> findMatchRoomNumber)
+            {
+                if (confirmReservationUser == findMatchUser && confirmReservationRoomNumber == findMatchRoomNumber)
+                {
                     userMatch = true;
                     break;
                 }
@@ -909,10 +982,13 @@ void userConfirmation() {
 
         myReservations.close();
 
-        if (!userMatch) {
+        if (!userMatch)
+        {
             cout << "No user matching...";
             continue;
-        } else if (userMatch == true) {
+        }
+        else if (userMatch == true)
+        {
 
             fstream bookingList;
             string addUser;
@@ -920,25 +996,25 @@ void userConfirmation() {
             bool succesConfirmed = false;
 
             bookingList.open("bookings.txt", ios::app);
-            if (!bookingList.is_open()) {
-            cerr << "File not found!";
-            return;
-            } else if (bookingList.is_open()){
-                
+            if (!bookingList.is_open())
+            {
+                cerr << "File not found!";
+                return;
+            }
+            else if (bookingList.is_open())
+            {
+
                 cout << "Successfully Confirmed!\n";
                 bookingList << confirmReservationUser << " " << confirmReservationRoomNumber << endl;
                 system("pause");
                 system("CLS");
                 myReservationsFunc();
                 return;
-                
             }
-
         }
 
-        
-
-        if (cin.fail() || confirmReservationRoomNumber != "1" || confirmReservationRoomNumber != "2" || confirmReservationUser != "2" || confirmReservationUser != "1") {
+        if (cin.fail() || confirmReservationRoomNumber != "1" || confirmReservationRoomNumber != "2" || confirmReservationUser != "2" || confirmReservationUser != "1")
+        {
             safetyInput();
             cout << "Input error\n";
             system("pause");
@@ -948,69 +1024,296 @@ void userConfirmation() {
     }
 }
 
-void reservationListConfirmDelDisplay() {
+void reservationListConfirmDelDisplay()
+{
     fstream myReservations;
     string displayReservation;
 
     myReservations.open("reservedRoomsLists.txt", ios::in);
 
-        if (!myReservations.is_open()) {
-            cerr << "File not found!";
+    if (!myReservations.is_open())
+    {
+        cerr << "File not found!";
+        return;
+    }
+    else if (myReservations.is_open())
+    {
+        while (getline(myReservations, displayReservation))
+        {
+            cout << "[*] " << displayReservation << endl;
+        }
+    }
+
+    myReservations.close();
+}
+
+void bookARoom()
+{
+    system("CLS");
+
+    while (true)
+    {
+        string roomBooking;
+        fstream bookingRoom;
+        string userRoomBooking;
+        string roomRoomBooking;
+
+        cout << "             B O O K    A   R O O M\n";
+        cout << "  <===========================================>\n";
+        cout << "       [1] Save and Exit    [2] Reserve\n";
+
+        bookingRoom.open("bookingDisplay.txt", ios::in);
+
+        if (!bookingRoom.is_open())
+        {
+            cout << "Available room file is missing\n";
             return;
-        } else if (myReservations.is_open()) {
-            while (getline(myReservations, displayReservation)) {
-                cout << "[*] " << displayReservation << endl;
+        }
+        if (bookingRoom.is_open())
+        {
+            while (getline(bookingRoom, roomBooking))
+            {
+                cout << roomBooking << endl;
             }
         }
 
-        myReservations.close();
+        bookingRoom.close();
+
+        cout << "Enter Username: ";
+        cin >> userRoomBooking;
+
+        if (userRoomBooking == "1")
+        {
+            system("CLS");
+            customerMenu();
+            return;
+        }
+        else if (userRoomBooking == "2")
+        {
+            system("CLS");
+            reserveFileFunc();
+            return;
+        }
+
+        cout << "Enter room number to book: ";
+        cin >> roomRoomBooking;
+
+        if (roomRoomBooking == "1")
+        {
+            system("CLS");
+            continue;
+        }
+        else if (userRoomBooking == "2")
+        {
+            system("CLS");
+            reserveFileFunc();
+            return;
+        }
+
+        fstream roomNumberCheck;
+        string roomStringChecker;
+        bool roomChecked = false;
+
+        roomNumberCheck.open("roomNumbers.txt", ios::in);
+
+        if (!roomNumberCheck.is_open())
+        {
+            cerr << "Error: Room Numbers File is Missing!";
+            return;
+        }
+        else if (roomNumberCheck.is_open())
+        {
+            while (getline(roomNumberCheck, roomStringChecker))
+            {
+                if (roomRoomBooking == roomStringChecker)
+                {
+                    roomChecked = true;
+                    break;
+                }
+                else
+                {
+                    roomChecked = false;
+                }
+            }
+        }
+
+        roomNumberCheck.close();
+
+        fstream bookingFile;
+        bookingFile.open("bookings.txt", ios::app);
+
+        if (!bookingFile.is_open())
+        {
+            cerr << "Error: Booking File is Missing!";
+            return;
+        }
+        else if (bookingFile.is_open())
+        {
+
+            if (roomChecked)
+            {
+                cout << "Booking Placed!\n";
+                bookingFile << userRoomBooking << " " << roomRoomBooking << endl;
+                system("pause");
+                system("CLS");
+                continue;
+            }
+            else
+            {
+                cout << "Room not available\n";
+                system("pause");
+                system("CLS");
+                continue;
+            }
+        }
+
+        bookingFile.close();
+    }
 }
 
-void bookARoom(){
-
-}
-
-void deleteUserReservation() {
+void deleteUserReservation()
+{
 
     system("CLS");
 
-    while (true) {
-        string selectReservation;
+    while (true)
+    {
+        string selectUser;
+        string selectroomNumber;
 
         cout << "          D E L E T E    R E S E R V A T I O N\n";
         cout << "<====================================================>\n";
         cout << "       [1] Cancel    [2] Confirm Reservation\n";
         cout << "    <===========================================>\n";
 
-        reserveRoomsDisplayFunc();
+        fstream reservedLists;
 
-        cout << "Select Reservation: ";
-        cin >> selectReservation;
+        reservedLists.open("reservedRoomsLists.txt", ios::in);
 
-        if (selectReservation == "1") {
+        cout << "Select User: ";
+        cin >> selectUser;
+
+        cout << "Select Room: ";
+
+        if (selectUser == "1")
+        {
             reserveFileFunc();
             return;
         }
     }
-
 }
 
+void confirmBooking() {
+    
+    system("CLS");
 
+    while (true) {
+        string bookingUser;
+        string bookingStringDisplay;
+        string bookingRoomNumber;
+        fstream bookingDisplay;
+        system("CLS");
 
+        cout << "                     B O O K I N G S\n";
+        cout << "      <===========================================>\n";
 
+        cout << "           [1] Back\n";
+        cout << "      <===========================================>\n\n";
 
+        bookingDisplay.open("bookings.txt", ios::in);
+        if (!bookingDisplay.is_open()) {
+            cerr << "Error: Booking File is Missing!";
+            return;
+        } else if (bookingDisplay.is_open()) {
+            while (getline(bookingDisplay, bookingStringDisplay)) {
+                cout << "      [*]" << bookingStringDisplay << endl;
+            }
+        }
 
+        bookingDisplay.close();
 
+        cout << " \n     <===========================================>\n";
 
+        cout << "           Enter username: ";
+        cin >> bookingUser;
 
+        if (bookingUser == "1") {
+            system("CLS");
+            myBookings();
+            return;
+        }
 
+        cout << "Enter room number: ";
+        cin >> bookingRoomNumber;
 
+        if (bookingRoomNumber == "1") {
+            system("CLS");
+            continue;
+        }
+        
+        
 
+        string line;
+        string lineMatch;
 
+        bool isMatched = false;
 
+        fstream bookingFile;
+        fstream tempFile;
 
+        bookingFile.open("bookings.txt", ios::in);
+        tempFile.open("temp.txt", ios::out);
+        if (!bookingFile.is_open() || !tempFile.is_open()) {
+            cerr << "Error: Booking File is Missing!";
+            return;
+        } else if (bookingFile.is_open()) {
+            while (getline(bookingFile, line)) {
+                if (line == bookingUser + " " + bookingRoomNumber) {
+                    isMatched = true;
 
+                    fstream transferConfirmed;
 
+                    transferConfirmed.open("confirmedBookings.txt", ios::app);
+                    if (!transferConfirmed.is_open()) {
+                        cerr << "Error: Confirmed Bookings File is Missing!";
+                        return;
+                    } else if (transferConfirmed.is_open()) {
+                        transferConfirmed << line << endl;
+                    }
+
+                    transferConfirmed.close();
+                    
+                    
+                } else {
+                    tempFile << line << endl;
+                }
+            }
+        }
+
+        bookingFile.close();
+        tempFile.close();
+
+        if (isMatched) {
+            
+            
+            remove("bookings.txt");
+            rename("temp.txt", "bookings.txt");
+            cout << "Booking Confirmed!\n";
+            system("pause");
+            system("CLS");
+            continue;
+        } else {
+            cout << "Booking not found!" << endl;
+            remove("temp.txt");
+            system("pause");
+            system("CLS");
+            continue;
+        }
+
+        
+
+    }
+}
 // https://stackoverflow.com/questions/29859796/c-auto-vs-auto#:~:text=So%2C%20in%20a%20nutshell%2C%20if,you%20want%20references%2C%20use%20auto%26%20.
 // https://www.youtube.com/watch?v=2vOPEuiGXVo
 // https://www.youtube.com/watch?v=TUBVZvzEQAs
