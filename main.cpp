@@ -797,6 +797,7 @@ void reserveFileFunc()
         string roomListsAuth;
 
         roomsLists.open("roomNumbers.txt", ios::in);
+
         if (!roomsLists.is_open())
         {
             cerr << "Error: Rooms Lists File is Missing!";
@@ -809,11 +810,6 @@ void reserveFileFunc()
                 if (reserveRoomNumber == roomListsAuth)
                 {
                     roomGoods = true;
-                    break;
-                }
-                else
-                {
-                    roomGoods = false;
                     break;
                 }
             }
@@ -840,6 +836,7 @@ void reserveFileFunc()
                 reserveListFile << reserveUsername << " " << reserveRoomNumber << endl;
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                system("CLS");
                 continue;
             }
             else
@@ -967,58 +964,66 @@ void userConfirmation()
 
         string findMatchUser;
         string findMatchRoomNumber;
+        string confirmationLine;
         bool userMatch = false;
+        fstream tempReservationFile;
+
+        tempReservationFile.open("tempReservation.txt", ios::out);
 
         myReservations.open("reservedRoomsLists.txt", ios::in);
 
-        if (!myReservations.is_open())
+        if (!myReservations.is_open() || !tempReservationFile.is_open())
         {
             cerr << "File not found!";
             return;
         }
         else if (myReservations.is_open())
         {
-            while (myReservations >> findMatchUser >> findMatchRoomNumber)
+            while (getline(myReservations, findMatchUser))
             {
-                if (confirmReservationUser == findMatchUser && confirmReservationRoomNumber == findMatchRoomNumber)
+                if (findMatchUser == confirmReservationUser + " " + confirmReservationRoomNumber)
                 {
                     userMatch = true;
-                    break;
+
+                    fstream successBooking;
+
+                    successBooking.open("bookings.txt", ios::app);
+                    if (!successBooking.is_open())
+                    {
+                        cerr << "File not found!";
+                        return;
+                    }
+                    else if (successBooking.is_open())
+                    {
+                        successBooking << findMatchUser << endl;
+                    }
+
+                    successBooking.close();
+                    
+                } else {
+                    tempReservationFile << findMatchUser << endl;
                 }
             }
         }
 
         myReservations.close();
+        tempReservationFile.close();
 
-        if (!userMatch)
+        if (userMatch)
         {
-            cout << "No user matching...";
+            remove("reservedRoomsLists.txt");
+            rename("tempReservation.txt", "reservedRoomsLists.txt");
+            cout << "Confirmed Successfully\n";
+            system("pause");
+            system("CLS");
             continue;
-        }
-        else if (userMatch == true)
-        {
 
-            fstream bookingList;
-            string addUser;
-            string userRoom;
-            bool succesConfirmed = false;
-
-            bookingList.open("bookings.txt", ios::app);
-            if (!bookingList.is_open())
-            {
-                cerr << "File not found!";
-                return;
-            }
-            else if (bookingList.is_open())
-            {
-
-                cout << "Successfully Confirmed!\n";
-                bookingList << confirmReservationUser << " " << confirmReservationRoomNumber << endl;
-                system("pause");
-                system("CLS");
-                myReservationsFunc();
-                return;
-            }
+        } else {
+            cout << "No user matching...";
+            remove("tempReservation.txt");
+            system("pause");
+            system("CLS");
+            continue;
         }
 
         if (cin.fail() || confirmReservationRoomNumber != "1" || confirmReservationRoomNumber != "2" || confirmReservationUser != "2" || confirmReservationUser != "1")
