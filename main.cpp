@@ -25,12 +25,13 @@ void safetyInput();
 void reserveRoomsDisplayFunc();
 void userConfirmation();
 void reservationListConfirmDelDisplay();
-void confirmUserReservation();
+//void confirmUserReservation();
 void confirmBooking();
 void confirmedBookingsFunc();
 void deleteReservationFunc();
 void bookingfDisplayFunc();
 void deleteBookingFunc();
+void removeRooms();
 
 int main()
 {
@@ -143,10 +144,11 @@ void loginMenu()
     while (true)
     {
         system("CLS");
-        cout << "           Login [Type 'Back' to return]\n";
+        cout << "                Login\n";
         cout << "<====================================>\n";
         cout << "[1] Back\n";
         cout << "[2] Forgot Password\n";
+        cout << "<====================================>\n";
         cout << "Username: ";
         cin >> staffUserName;
 
@@ -322,6 +324,7 @@ void staffMenu()
         cout << " [5]  Delete Reservation\n";
         cout << " [6]  Delete Bookings\n";
         cout << " [7]  Save and Exit\n";
+        cout << "<===========================================>\n";
         cout << "Input: ";
         cin >> userInputStaff;
 
@@ -519,7 +522,9 @@ void availRooms()
 
         cout << "       A V A I L A B L E   R O O M S\n";
         cout << "<===========================================>\n";
-        roomOne.open("firstFloorRooms.txt", ios::in);
+        cout << "[1] Save and Exit    [2] Bookings    [3] Reservations\n";
+        cout << "<===========================================>\n";
+        roomOne.open("availRooms.txt", ios::in);
 
         if (!roomOne.is_open())
         {
@@ -530,11 +535,12 @@ void availRooms()
         {
             while (getline(roomOne, roomsOne))
             {
-                cout << roomsOne << endl;
+                cout << "[*] " << roomsOne << endl;
             }
         }
 
         roomOne.close();
+        cout << "<===========================================>\n";
 
         cout << "Input: ";
 
@@ -650,9 +656,12 @@ void myReservationsFunc()
 
         cout << "       R E S E R V A T I O N  L I S T\n";
         cout << "<===========================================>\n";
-        cout << "[1] Back    [2] Confirm     [3] Delete \n\n";
+        cout << "[1] Back    [2] Confirm     [3] Delete \n";
+        cout << "<===========================================>\n\n";
 
         reservationListConfirmDelDisplay();
+
+        cout << "<===========================================>\n";
 
         cout << "Input: ";
         cin >> reservationInput;
@@ -731,7 +740,7 @@ void customerMenu()
     }
 }
 
-/* void reserveRooms() {
+ /*void reserveRooms() {
 
     int reserveInput;
 
@@ -780,6 +789,8 @@ void reserveFileFunc()
         string reserveListOutput;
         string reserveUsername;
 
+        cout << "<===========================================>\n";
+
         cout << "Input Username: ";
         cin >> reserveUsername;
 
@@ -823,7 +834,7 @@ void reserveFileFunc()
         fstream roomsLists;
         string roomListsAuth;
 
-        roomsLists.open("roomNumbers.txt", ios::in);
+        roomsLists.open("availRooms.txt", ios::in);
 
         if (!roomsLists.is_open())
         {
@@ -911,6 +922,7 @@ void reserveRoomsDisplayFunc()
     cout << "               Room Reservation\n";
     cout << "<===========================================>\n";
     cout << "  [1] Back     [2] Book \n";
+    cout << "<===========================================>\n";
 
     theReservedList.open("availRooms.txt", ios::in);
 
@@ -924,7 +936,7 @@ void reserveRoomsDisplayFunc()
         while (getline(theReservedList, theRooms))
         {
             // system("CLS");
-            cout << theRooms << endl;
+            cout << "[*] " << theRooms << endl;
         }
     }
     theReservedList.close();
@@ -953,9 +965,11 @@ void userConfirmation()
         cout << "           C O N F I R M   R E S E R V A T I O N\n";
         cout << "<=========================================================>\n";
         cout << "         [1] Back    [2] Delete Reservation\n";
-        cout << "     <===========================================>\n";
+        cout << "     <===========================================>\n\n";
 
         reservationListConfirmDelDisplay();
+
+        cout << "<====================================================>\n";
 
         cout << "Enter User: ";
         cin >> confirmReservationUser;
@@ -963,7 +977,7 @@ void userConfirmation()
         if (confirmReservationUser == "1")
         {
             system("CLS");
-            myReservationsFunc();
+            staffMenu();
             return;
         }
         else if (confirmReservationUser == "2")
@@ -985,7 +999,7 @@ void userConfirmation()
         else if (confirmReservationRoomNumber == "2")
         {
             system("CLS");
-            confirmUserReservation();
+            deleteReservationFunc();
             return;
         }
 
@@ -1103,8 +1117,9 @@ void bookARoom()
         cout << "             B O O K    A   R O O M\n";
         cout << "  <===========================================>\n";
         cout << "       [1] Save and Exit    [2] Reserve\n";
+        cout << "  <===========================================>\n";
 
-        bookingRoom.open("bookingDisplay.txt", ios::in);
+        bookingRoom.open("availRooms.txt", ios::in);
 
         if (!bookingRoom.is_open())
         {
@@ -1115,11 +1130,12 @@ void bookARoom()
         {
             while (getline(bookingRoom, roomBooking))
             {
-                cout << roomBooking << endl;
+                cout << "  [*] " << roomBooking << endl;
             }
         }
 
         bookingRoom.close();
+        cout << "<=============================================>\n";
 
         cout << "Enter Username: ";
         cin >> userRoomBooking;
@@ -1152,11 +1168,33 @@ void bookARoom()
             return;
         }
 
+        fstream checkAvail;
+        string availName;
+        string availRoom;
+
+        checkAvail.open("confirmedBookings.txt", ios::in);
+
+        if (!checkAvail.is_open()) {
+            cerr << "File not found\n";
+            return;
+        } else if (checkAvail.is_open()) {
+            while (checkAvail >> availName >> availRoom) {
+                if (roomRoomBooking == availRoom) {
+                    cout << "Room is not available";
+                    system("pause");
+                    system("CLS");
+                    bookARoom();
+                }
+            }
+        }
+
+        checkAvail.close();
+
         fstream roomNumberCheck;
         string roomStringChecker;
         bool roomChecked = false;
 
-        roomNumberCheck.open("roomNumbers.txt", ios::in);
+        roomNumberCheck.open("availRooms.txt", ios::in);
 
         if (!roomNumberCheck.is_open())
         {
@@ -1210,10 +1248,14 @@ void bookARoom()
         }
 
         bookingFile.close();
+
+        
     }
+
+    
 }
 
-void confirmUserReservation()
+/*void confirmUserReservation()
 {
 
     system("CLS");
@@ -1226,11 +1268,13 @@ void confirmUserReservation()
         cout << "          D E L E T E    R E S E R V A T I O N\n";
         cout << "<====================================================>\n";
         cout << "       [1] Cancel    [2] Confirm Reservation\n";
-        cout << "    <===========================================>\n";
+        cout << "    <===========================================>\n\n";
 
         fstream reservedLists;
 
         reservedLists.open("reservedRoomsLists.txt", ios::in);
+
+        cout << "<====================================================>\n";
 
         cout << "Select User: ";
         cin >> selectUser;
@@ -1244,7 +1288,7 @@ void confirmUserReservation()
         }
     }
 }
-
+*/
 void confirmBooking()
 {
 
@@ -1261,7 +1305,7 @@ void confirmBooking()
         cout << "                     B O O K I N G S\n";
         cout << "      <===========================================>\n";
 
-        cout << "           [1] Back\n";
+        cout << "           [1] Back    [2] Delete Bookings \n";
         cout << "      <===========================================>\n\n";
 
         bookingfDisplayFunc();
@@ -1274,7 +1318,13 @@ void confirmBooking()
         if (bookingUser == "1")
         {
             system("CLS");
-            myBookings();
+            staffMenu();
+            return;
+        }
+        else if (bookingUser == "2")
+        {
+            system("CLS");
+            deleteBookingFunc();
             return;
         }
 
@@ -1285,6 +1335,11 @@ void confirmBooking()
         {
             system("CLS");
             continue;
+        } else if (bookingRoomNumber == "2")
+        {
+            system("CLS");
+            deleteBookingFunc();
+            return;
         }
 
         string line;
@@ -1324,6 +1379,8 @@ void confirmBooking()
                     }
 
                     transferConfirmed.close();
+
+                    
                 }
                 else
                 {
@@ -1341,6 +1398,7 @@ void confirmBooking()
             remove("bookings.txt");
             rename("temp.txt", "bookings.txt");
             cout << "Booking Confirmed!\n";
+            removeRooms();
             system("pause");
             system("CLS");
             continue;
@@ -1366,7 +1424,7 @@ void confirmedBookingsFunc()
 
         cout << "           C O N F I R M E D   B O O K I N G S\n";
         cout << "      <===========================================>\n";
-        cout << "       [1] Back    [2] Delete Bookings \n";
+        cout << "       [1] Back\n";
         cout << "      <===========================================>\n\n";
 
         fstream displayBookings;
@@ -1405,12 +1463,6 @@ void confirmedBookingsFunc()
         {
             system("CLS");
             staffMenu();
-            return;
-        }
-        else if (options == "2")
-        {
-            system("CLS");
-            deleteBookingFunc();
             return;
         }
     }
@@ -1544,7 +1596,7 @@ void deleteBookingFunc()
         else if (userDelBooking == "2")
         {
             system("CLS");
-            userConfirmation();
+            confirmBooking();
             return;
         }
 
@@ -1633,6 +1685,86 @@ void bookingfDisplayFunc()
     bookingDisplay.close();
 }
 
+void removeRooms() {
+
+    fstream confirmedBooks;
+    string confirmedUser;
+    string confirmedRoom;
+
+    
+
+    confirmedBooks.open("confirmedBookings.txt", ios::in);
+    if (!confirmedBooks.is_open()){
+        cerr << "File not found\n";
+        return;
+    } else if (confirmedBooks.is_open()) {
+        while (confirmedBooks >> confirmedUser >> confirmedRoom) {
+            
+            fstream roomNoAvail;
+            fstream noAvailTemp;
+            string noAvailTxt;
+            bool notAvail = false;
+            
+
+            roomNoAvail.open("availRooms.txt", ios::in);
+            noAvailTemp.open("tempAvail.txt",ios::out);
+            if(!roomNoAvail.is_open() || !noAvailTemp.is_open()) {
+                cerr << "File not found\n";
+                return;
+            } else if (roomNoAvail.is_open() || noAvailTemp.is_open()) {
+                while (getline(roomNoAvail, noAvailTxt)) {
+                    if (noAvailTxt != confirmedRoom) {
+                        noAvailTemp << noAvailTxt << endl;
+                    } else {
+                        notAvail = true;
+                    }
+                }
+                roomNoAvail.close();
+                noAvailTemp.close();
+
+                
+            }
+
+            if (notAvail) {
+            remove("availRooms.txt");
+            rename("tempAvail.txt", "availRooms.txt");
+            } else {
+                remove("tempAvail.txt");
+            }
+
+        }    
+
+    }
+    confirmedBooks.close();
+    
+
+    
+
+}
+
+
+/* void roomAvailability (){
+    fstream checkAvail;
+    string availName;
+    string availRoom;
+
+    checkAvail.open("confirmedBookings.txt", ios::in);
+
+    if (!checkAvail.is_open()) {
+        cerr << "File not found\n";
+        return;
+    } else if (checkAvail.is_open()) {
+        while (checkAvail >> availName >> availRoom) {
+            if (roomRoomBooking == availRoom) {
+                cout << "Room is not available";
+            }
+        }
+    }
+
+    checkAvail.close();
+
+    
+} */
 // https://stackoverflow.com/questions/29859796/c-auto-vs-auto#:~:text=So%2C%20in%20a%20nutshell%2C%20if,you%20want%20references%2C%20use%20auto%26%20.
 // https://www.youtube.com/watch?v=2vOPEuiGXVo
 // https://www.youtube.com/watch?v=TUBVZvzEQAs
