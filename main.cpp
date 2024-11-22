@@ -146,19 +146,19 @@ void loginMenu()
         system("CLS");
         cout << "                Login\n";
         cout << "<====================================>\n";
-        cout << "[1] Back\n";
-        cout << "[2] Forgot Password\n";
+        cout << "[1] Forgot Password\n";
+        cout << "[2] Back\n";
         cout << "<====================================>\n";
         cout << "Username: ";
         cin >> staffUserName;
 
-        if (staffUserName == "1")
+        if (staffUserName == "2")
         { // added back option in case of user mis clicked an option
             staffSignIn();
             system("CLS");
             return;
         }
-        else if (staffUserName == "2")
+        else if (staffUserName == "1")
         {
             forgotPass();
             system("CLS");
@@ -168,12 +168,12 @@ void loginMenu()
         cout << "Password: ";
         cin >> staffPasswd;
 
-        if (staffPasswd == "1")
+        if (staffPasswd == "2")
         {
             system("CLS");
             continue;
         }
-        else if (staffPasswd == "2")
+        else if (staffPasswd == "1")
         {
             forgotPass();
             system("CLS");
@@ -522,7 +522,7 @@ void availRooms()
 
         cout << "       A V A I L A B L E   R O O M S\n";
         cout << "<===========================================>\n";
-        cout << "[1] Save and Exit    [2] Bookings    [3] Reservations\n";
+        cout << "[1] Bookings    [2] Reservations   [3] Save and Exit\n";
         cout << "<===========================================>\n";
         roomOne.open("availRooms.txt", ios::in);
 
@@ -556,19 +556,19 @@ void availRooms()
             continue;
         }
 
-        if (roomInput == "1")
+        if (roomInput == "3")
         {
             system("CLS");
             staffMenu();
 
             return;
         }
-        else if (roomInput == "2")
+        else if (roomInput == "1")
         {
             myBookings();
             return;
         }
-        else if (roomInput == "3")
+        else if (roomInput == "2")
         {
             myReservationsFunc();
             return;
@@ -590,7 +590,7 @@ void myBookings()
         cout << "                     B O O K I N G S\n";
         cout << "      <===========================================>\n";
 
-        cout << "           [1] Back  [2] Confirm a booking\n";
+        cout << "           [1] Confirm a booking   [2] Back\n";
         cout << "      <===========================================>\n\n";
 
         booKings.open("bookings.txt", ios::in);
@@ -616,12 +616,12 @@ void myBookings()
 
         cin >> bookingInput;
 
-        if (bookingInput == 1)
+        if (bookingInput == 2)
         {
             staffMenu();
             return;
         }
-        else if (bookingInput == 2)
+        else if (bookingInput == 1)
         {
             confirmBooking();
         }
