@@ -1524,7 +1524,7 @@ void deleteReservationFunc()
         bool isDeleted = false;
 
         deleteReserve.open("reservedRoomsLists.txt", ios::in);
-        deleteTemp.open("deleteTemp.txt", ios::out);
+        deleteTemp.open("deleteResTemp.txt", ios::out);
 
         if (!deleteReserve.is_open() || !deleteTemp.is_open())
         {
@@ -1538,6 +1538,8 @@ void deleteReservationFunc()
                 if (textDelete != deleteUser + " " + deleteRoom)
                 {
                     deleteTemp << textDelete << endl;
+                    
+                } else {
                     isDeleted = true;
                 }
             }
@@ -1549,7 +1551,7 @@ void deleteReservationFunc()
         if (isDeleted)
         {
             remove("reservedRoomsLists.txt");
-            rename("deleteTemp.txt", "reservedRoomsLists.txt");
+            rename("deleteResTemp.txt", "reservedRoomsLists.txt");
             cout << "Resrvation Deleted!\n";
             system("pause");
             system("CLS");
@@ -1558,7 +1560,7 @@ void deleteReservationFunc()
         else
         {
             cout << "Reservation not found!\n";
-            remove("deleteTemp.txt");
+            remove("deleteResTemp.txt");
             system("pause");
             system("CLS");
             continue;
