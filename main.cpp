@@ -31,7 +31,9 @@ void confirmedBookingsFunc();
 void deleteReservationFunc();
 void bookingfDisplayFunc();
 void deleteBookingFunc();
-void removeRooms();
+void removeSoloRooms();
+void removeTwinRooms();
+void removeDeluxeRooms();
 void allDisplayFunc();
 
 int main()
@@ -1225,7 +1227,7 @@ void userConfirmation()
 
         tempSolo.close();
         tempTwin.close();
-        tempTwin.close();
+        tempDeluxe.close();
         mySoloReservations.close();
         myTwinReservations.close();
         myDeluxeReservations.close();
@@ -1681,69 +1683,179 @@ void confirmBooking()
             return;
         }
 
-        string line;
-        string lineMatch;
+        string findSoloMatchUser;
+        string findSoloMatchRoomNumber;
+        string findTwinMatchUser;
+        string findTwinMatchRoomNumber;
+        string findDeluxeMatchUser;
+        string findDeluxeMatchRoomNumber;
+        string confirmationLine;
+        fstream tempSolo;
+        fstream tempTwin;
+        fstream tempDeluxe;
+        fstream mySoloReservations;
+        fstream myTwinReservations;
+        fstream myDeluxeReservations;
+        bool userMatch = false;
+        bool isSolo = false;
+        bool isTwin = false;
+        bool isDeluxe = false;
 
-        bool isMatched = false;
+        tempSolo.open("tempSolo.txt", ios::out);
+        tempTwin.open("tempTwin.txt", ios::out);
+        tempDeluxe.open("tempDeluxe.txt", ios::out);
+        mySoloReservations.open("soloBookings.txt", ios::in);
+        myTwinReservations.open("twinBookings.txt", ios::in);
+        myDeluxeReservations.open("deluxeBookings.txt", ios::in);
 
-        fstream bookingFile;
-        fstream tempFile;
-
-        bookingFile.open("bookings.txt", ios::in);
-        tempFile.open("temp.txt", ios::out);
-        if (!bookingFile.is_open() || !tempFile.is_open())
+        if (!mySoloReservations.is_open() || !tempSolo.is_open() || !tempDeluxe.is_open() ||!tempTwin.is_open() || !myTwinReservations.is_open() || !myDeluxeReservations.is_open())
         {
-            cerr << "Error: Booking File is Missing!";
+            cerr << "File not found!";
             return;
         }
-        else if (bookingFile.is_open())
+        else if (mySoloReservations.is_open() || tempSolo.is_open() || tempDeluxe.is_open() ||tempTwin.is_open() || myTwinReservations.is_open() || myDeluxeReservations.is_open())
         {
-            while (getline(bookingFile, line))
+            while (getline(mySoloReservations, findSoloMatchUser))
             {
-                if (line == bookingUser + " " + bookingRoomNumber)
+                if (findSoloMatchUser == bookingUser + " " + bookingRoomNumber)
                 {
-                    isMatched = true;
+                    userMatch = true;
+                    isSolo = true;
 
-                    fstream transferConfirmed;
+                    fstream successBooking;
 
-                    transferConfirmed.open("confirmedBookings.txt", ios::app);
-                    if (!transferConfirmed.is_open())
+                    successBooking.open("soloConfirmedBooking.txt", ios::app);
+                    if (!successBooking.is_open())
                     {
-                        cerr << "Error: Confirmed Bookings File is Missing!";
+                        cerr << "File not found!";
                         return;
                     }
-                    else if (transferConfirmed.is_open())
+                    else if (successBooking.is_open())
                     {
-                        transferConfirmed << line << endl;
+                        successBooking << findSoloMatchUser << endl;
                     }
 
-                    transferConfirmed.close();
+                    successBooking.close();
                 }
                 else
                 {
-                    tempFile << line << endl;
+                    tempSolo << findSoloMatchUser << endl;
+                }
+            }
+
+            while (getline(myTwinReservations, findTwinMatchUser))
+            {
+                if (findTwinMatchUser == bookingUser + " " + bookingRoomNumber)
+                {
+                    userMatch = true;
+                    isTwin = true;
+
+                    fstream successBooking;
+
+                    successBooking.open("twinConfirmedBooking.txt", ios::app);
+                    if (!successBooking.is_open())
+                    {
+                        cerr << "File not found!";
+                        return;
+                    }
+                    else if (successBooking.is_open())
+                    {
+                        successBooking << findTwinMatchUser << endl;
+                    }
+
+                    successBooking.close();
+                }
+                else
+                {
+                    tempTwin << findTwinMatchUser << endl;
+                }
+            }
+
+            while (getline(myDeluxeReservations, findDeluxeMatchUser))
+            {
+                if (findDeluxeMatchUser == bookingUser + " " + bookingRoomNumber)
+                {
+                    userMatch = true;
+                    isDeluxe = true;
+
+                    fstream successBooking;
+
+                    successBooking.open("deluxeConfirmedBooking.txt", ios::app);
+                    if (!successBooking.is_open())
+                    {
+                        cerr << "File not found!";
+                        return;
+                    }
+                    else if (successBooking.is_open())
+                    {
+                        successBooking << findDeluxeMatchUser << endl;
+                    }
+
+                    successBooking.close();
+                }
+                else
+                {
+                    tempDeluxe << findDeluxeMatchUser << endl;
                 }
             }
         }
 
-        bookingFile.close();
-        tempFile.close();
+        tempSolo.close();
+        tempTwin.close();
+        tempDeluxe.close();
+        mySoloReservations.close();
+        myTwinReservations.close();
+        myDeluxeReservations.close();
 
-        if (isMatched)
+        if (userMatch)
         {
-
-            remove("bookings.txt");
-            rename("temp.txt", "bookings.txt");
-            cout << "Booking Confirmed!\n";
-            removeRooms();
+            if (isSolo)
+            {
+                removeSoloRooms();
+                remove("soloBookings.txt");
+                rename("tempSolo.txt", "soloBookings.txt");
+                
+                cout << "Confirmed Successfully\n";
+                system("pause");
+                system("CLS");
+                continue;
+            }
+            else if (isTwin)
+            {
+                removeTwinRooms();
+                remove("twinBookings.txt");
+                rename("tempTwin.txt", "twinBookings.txt");
+                cout << "Confirmed Successfully\n";
+                system("pause");
+                system("CLS");
+                continue;
+            }
+            else if (isDeluxe)
+            {
+                removeDeluxeRooms();
+                remove("deluxeBookings.txt");
+                rename("tempDeluxe.txt", "deluxeBookings.txt");
+                cout << "Confirmed Successfully\n";
+                system("pause");
+                system("CLS");
+                continue;
+            }
+        }
+        else
+        {
+            cout << "No user matching...\n";
+            remove("tempSolo.txt");
+            remove("tempTwin.txt");
+            remove("tempDeluxe.txt");
             system("pause");
             system("CLS");
             continue;
         }
-        else
+
+        if (cin.fail() || bookingRoomNumber != "1" || bookingRoomNumber != "2" || bookingUser != "2" || bookingUser != "1")
         {
-            cout << "Booking not found!" << endl;
-            remove("temp.txt");
+            safetyInput();
+            cout << "Input error\n";
             system("pause");
             system("CLS");
             continue;
@@ -1764,24 +1876,49 @@ void confirmedBookingsFunc()
         cout << "       [1] Back\n";
         cout << "      <===========================================>\n\n";
 
-        fstream displayBookings;
-        string displayBookingString;
-        displayBookings.open("confirmedBookings.txt", ios::in);
+        fstream soloList;
+    fstream twinList;
+    fstream deluxeList;
+    string soloRooms;
+    string deluxeRooms;
+    string twinRooms;
 
-        if (!displayBookings.is_open())
+    soloList.open("soloConfirmedBooking.txt", ios::in);
+    twinList.open("twinConfirmedBooking.txt", ios::in);
+    deluxeList.open("deluxeConfirmedBooking.txt", ios::in);
+
+    if (!soloList.is_open() || !twinList.is_open() || !deluxeList.is_open())
+    {
+        cout << "Available room file is missing\n";
+        return;
+    }
+    else if (soloList.is_open() || twinList.is_open() || deluxeList.is_open())
+    {
+        cout << "\n Solo Rooms \n";
+        while (getline(soloList, soloRooms))
         {
-            cerr << "Error: Confirmed Bookings File is Missing!";
-            return;
+            // system("CLS");
+            cout << "[*] " << soloRooms << endl;
         }
-        else if (displayBookings.is_open())
+        cout << "\n Twin Bed Rooms \n";
+
+        while (getline(twinList, twinRooms))
         {
-            while (getline(displayBookings, displayBookingString))
-            {
-                cout << "      [*] " << displayBookingString << endl;
-            }
+            // system("CLS");
+            cout << "[*] " << twinRooms << endl;
         }
 
-        displayBookings.close();
+        cout << "\n Deluxe Rooms \n";
+
+        while (getline(deluxeList, deluxeRooms))
+        {
+            // system("CLS");
+            cout << "[*] " << deluxeRooms << endl;
+        }
+    }
+    soloList.close();
+    twinList.close();
+    deluxeList.close();
 
         cout << "      <===========================================>\n";
 
@@ -2183,14 +2320,14 @@ void bookingfDisplayFunc()
     deluxeList.close();
 }
 
-void removeRooms()
+void removeSoloRooms()
 {
 
     fstream confirmedBooks;
     string confirmedUser;
     string confirmedRoom;
 
-    confirmedBooks.open("confirmedBookings.txt", ios::in);
+    confirmedBooks.open("soloConfirmedBooking.txt", ios::in);
     if (!confirmedBooks.is_open())
     {
         cerr << "File not found\n";
@@ -2206,7 +2343,7 @@ void removeRooms()
             string noAvailTxt;
             bool notAvail = false;
 
-            roomNoAvail.open("availRooms.txt", ios::in);
+            roomNoAvail.open("soloRooms.txt", ios::in);
             noAvailTemp.open("tempAvail.txt", ios::out);
             if (!roomNoAvail.is_open() || !noAvailTemp.is_open())
             {
@@ -2232,8 +2369,130 @@ void removeRooms()
 
             if (notAvail)
             {
-                remove("availRooms.txt");
-                rename("tempAvail.txt", "availRooms.txt");
+                remove("soloRooms.txt");
+                rename("tempAvail.txt", "soloRooms.txt");
+            }
+            else
+            {
+                remove("tempAvail.txt");
+            }
+        }
+    }
+    confirmedBooks.close();
+}
+
+void removeTwinRooms()
+{
+
+    fstream confirmedBooks;
+    string confirmedUser;
+    string confirmedRoom;
+
+    confirmedBooks.open("twinConfirmedBooking.txt", ios::in);
+    if (!confirmedBooks.is_open())
+    {
+        cerr << "File not found\n";
+        return;
+    }
+    else if (confirmedBooks.is_open())
+    {
+        while (confirmedBooks >> confirmedUser >> confirmedRoom)
+        {
+
+            fstream roomNoAvail;
+            fstream noAvailTemp;
+            string noAvailTxt;
+            bool notAvail = false;
+
+            roomNoAvail.open("twinBed.txt", ios::in);
+            noAvailTemp.open("tempAvail.txt", ios::out);
+            if (!roomNoAvail.is_open() || !noAvailTemp.is_open())
+            {
+                cerr << "File not found\n";
+                return;
+            }
+            else if (roomNoAvail.is_open() || noAvailTemp.is_open())
+            {
+                while (getline(roomNoAvail, noAvailTxt))
+                {
+                    if (noAvailTxt != confirmedRoom)
+                    {
+                        noAvailTemp << noAvailTxt << endl;
+                    }
+                    else
+                    {
+                        notAvail = true;
+                    }
+                }
+                roomNoAvail.close();
+                noAvailTemp.close();
+            }
+
+            if (notAvail)
+            {
+                remove("twinBed.txt");
+                rename("tempAvail.txt", "twinBed.txt");
+            }
+            else
+            {
+                remove("tempAvail.txt");
+            }
+        }
+    }
+    confirmedBooks.close();
+}
+
+void removeDeluxeRooms()
+{
+
+    fstream confirmedBooks;
+    string confirmedUser;
+    string confirmedRoom;
+
+    confirmedBooks.open("deluxeConfirmedBooking.txt", ios::in);
+    if (!confirmedBooks.is_open())
+    {
+        cerr << "File not found\n";
+        return;
+    }
+    else if (confirmedBooks.is_open())
+    {
+        while (confirmedBooks >> confirmedUser >> confirmedRoom)
+        {
+
+            fstream roomNoAvail;
+            fstream noAvailTemp;
+            string noAvailTxt;
+            bool notAvail = false;
+
+            roomNoAvail.open("deluxeBed.txt", ios::in);
+            noAvailTemp.open("tempAvail.txt", ios::out);
+            if (!roomNoAvail.is_open() || !noAvailTemp.is_open())
+            {
+                cerr << "File not found\n";
+                return;
+            }
+            else if (roomNoAvail.is_open() || noAvailTemp.is_open())
+            {
+                while (getline(roomNoAvail, noAvailTxt))
+                {
+                    if (noAvailTxt != confirmedRoom)
+                    {
+                        noAvailTemp << noAvailTxt << endl;
+                    }
+                    else
+                    {
+                        notAvail = true;
+                    }
+                }
+                roomNoAvail.close();
+                noAvailTemp.close();
+            }
+
+            if (notAvail)
+            {
+                remove("deluxeBed.txt");
+                rename("tempAvail.txt", "deluxeBed.txt");
             }
             else
             {
